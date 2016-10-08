@@ -10,16 +10,17 @@ namespace WebService
     {
         Data data = new Data();
 
-        public Data JsonDeCoding(string json)
+        public Data JsonDeCoding(String json)
         {
             Data data = JsonConvert.DeserializeObject<Data>(json);
             return data;
         }
 
-        public string JsonCoding(Data data)
+        public String JsonCoding(Data data)
         {
             string json = JsonConvert.SerializeObject(data);
             return json;
         }
+
     }
 }

@@ -11,8 +11,8 @@ namespace WebService
         [JsonProperty("id")]
         public int id { get; set; }
         [JsonProperty("name")]
-        public int name { get; set; }
+        public string name { get; set; }
         [JsonProperty("base64")]
-        public int base64 { get; set; }
+        public string base64 { get; set; }
     }
 }
