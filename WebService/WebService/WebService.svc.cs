@@ -20,5 +20,16 @@ namespace WebService
 
             return "Positive response";
         }
+
+        public string GetFile(Stream Data)
+        {
+            string Json;
+            Data data = new Data();
+            JsonCode json = new JsonCode();
+            data.base64 = "amEgbmVlIGlrIGdhIG1pam4gcGFzIG5pZSBkb29yc3R1cmVu";
+            data.name = "tsserver.txt";
+            Json = json.JsonCoding(data);
+            return Json;
+        }
     }
 }
