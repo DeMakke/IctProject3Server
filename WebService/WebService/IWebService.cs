@@ -28,5 +28,13 @@ namespace WebService
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "Json/GetFile")]
         string GetFile(Stream Data);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.WrappedRequest,
+            UriTemplate = "Json/SaveFile")]
+        string SaveFile(Stream Data);
     }
 }
