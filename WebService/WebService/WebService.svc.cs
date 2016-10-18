@@ -36,8 +36,8 @@ namespace WebService
         {
             StreamReader reader = new StreamReader(data);
             String JSONData = reader.ReadToEnd();
-            //hier komt eerst de rest van de functies en dan returned ge een boolean
-            return "";
+
+            return JSONData;
         }
     }
 }
