@@ -100,6 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data.cs" />
+    <Compile Include="FileList.cs" />
     <Compile Include="IWebService.cs" />
     <Compile Include="JsonCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
