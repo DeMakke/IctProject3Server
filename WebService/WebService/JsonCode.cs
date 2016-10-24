@@ -58,5 +58,16 @@ namespace WebService
             return retVal;
         }
 
+        public string cropString(string input)
+        {
+            string output;
+            input = input.Remove(0, 1);
+            output = input.Remove(input.Length - 1);
+            output = output.Replace("\\\"", "\"");
+            output = "{\"" + output + "\"}";
+            return output;
+        }
+
+
     }
 }

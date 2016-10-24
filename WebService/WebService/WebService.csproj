@@ -99,7 +99,9 @@
     <Content Include="WebService.svc" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base64Code.cs" />
     <Compile Include="Data.cs" />
+    <Compile Include="Database.cs" />
     <Compile Include="FileList.cs" />
     <Compile Include="IWebService.cs" />
     <Compile Include="JsonCode.cs" />

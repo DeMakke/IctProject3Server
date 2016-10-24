@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.IO;
 using System.Windows;
 using System.Linq;
@@ -15,28 +14,12 @@ namespace WebService
 
     public class WebService : IWebService
     {
-        SqlConnection connection = new SqlConnection("Data Source=JANLAPTOP;Initial Catalog=fileshare;Integrated Security=True");
-        SqlCommand cmd = new SqlCommand();
-
+        
         public void GetData()
         {
-            connection.Open();
+            Database databseInterface = new Database();
 
-            cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT * FROM fileTable";
-
-            SqlDataReader reader;
-            reader = cmd.ExecuteReader();
-
-            string name = "";
-            Guid id = new Guid();
-            while (reader.Read())
-            {
-                id = reader.GetGuid(0);
-                name = reader.GetString(1);
-            }
-            reader.Close();
-            connection.Close();
+            databseInterface.GetData();
         }
 
         public string Default(Stream data)
@@ -61,8 +44,17 @@ namespace WebService
         public string SaveFile(Stream data)
         {
             StreamReader reader = new StreamReader(data);
-            String JSONData = reader.ReadToEnd();
+            string JSONData = reader.ReadToEnd();
+            JsonCode json = new JsonCode();
+            Base64Code base64 = new Base64Code();
 
+            //JSONData = json.cropString(JSONData);
+            string CleanedJSON = json.cropString(JSONData);
+
+            Data receivedDataO = json.JsonDeCoding(CleanedJSON);
+
+            Tuple<byte[], string> file = base64.DeSerializeBase64(receivedDataO); 
+            base64.saveFile(file.Item1, file.Item2);
             return JSONData;
         }
     }
