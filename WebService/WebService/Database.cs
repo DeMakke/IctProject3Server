@@ -31,5 +31,36 @@ namespace WebService
             reader.Close();
             connection.Close();
         }
+
+        public bool DeleteData(Data file)
+        {
+            try
+            {
+                connection.Open();
+                cmd = connection.CreateCommand();
+                cmd.CommandText = "DELETE " + file.name + " FROM fileTable";
+
+                if (cmd.ExecuteNonQuery() == 1)
+                {
+                    // querry gedaan
+                    return true;
+                }
+                else
+                {
+                    //query niet gedaan
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                //geeft error aan foutmelding object?
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+        }
     }
 }
