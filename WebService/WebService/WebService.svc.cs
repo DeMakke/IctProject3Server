@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
+using System.Diagnostics;
 
 namespace WebService
 {
@@ -14,7 +15,8 @@ namespace WebService
 
     public class WebService : IWebService
     {
-        
+        public static List<SaveFilePackets> inp = new List<SaveFilePackets>();
+
         public void GetData()
         {
             Database databseInterface = new Database();
@@ -41,21 +43,85 @@ namespace WebService
             return Json;
         }
 
-        public string SaveFile(Stream data)
+        public string SaveFile(Stream data, string id,string max, string current)
         {
             StreamReader reader = new StreamReader(data);
             string JSONData = reader.ReadToEnd();
-            JsonCode json = new JsonCode();
+
+            
             Base64Code base64 = new Base64Code();
 
-            //JSONData = json.cropString(JSONData);
-            string CleanedJSON = json.cropString(JSONData);
 
-            Data receivedDataO = json.JsonDeCoding(CleanedJSON);
+            inp[inp.FindIndex(x => x.id == Convert.ToInt16(id))].base64stringpackets.Add(JSONData);
 
-            Tuple<byte[], string> file = base64.DeSerializeBase64(receivedDataO); 
-            base64.saveFile(file.Item1, file.Item2);
+            if (current == max)
+            {
+
+                inp[Convert.ToInt16(id)].FileData.base64 = "";
+
+                foreach (string item in inp[Convert.ToInt16(id)].base64stringpackets)
+                {
+                    inp[Convert.ToInt16(id)].FileData.base64 += item;
+                }
+                Tuple<byte[],string> filebytes = base64.DeSerializeBase64(inp[Convert.ToInt16(id)].FileData);
+                inp[Convert.ToInt16(id)].FileData.path = base64.saveFile(filebytes.Item1, inp[Convert.ToInt16(id)].FileData.name);
+
+                Database database = new Database();
+
+                bool status = database.AddRecord(inp[Convert.ToInt16(id)].FileData);
+                Debug.WriteLine(status);
+                JSONData = "OK" + inp[Convert.ToInt16(id)].base64stringpackets.Count;
+                
+                inp.RemoveAll(x => x.id == Convert.ToInt16(id));
+                
+            }
+            
             return JSONData;
+        }
+
+        public string CheckDivisionOfData(Stream Data)
+        {
+
+            StreamReader reader = new StreamReader(Data);
+            JsonCode json = new JsonCode();
+            string JSONData = reader.ReadToEnd();
+
+
+            Data receivedDataO = json.Deserialize<Data>(JSONData);
+
+            int amountOfPackets = 0;
+
+
+            if (receivedDataO.size > 50000)
+            {
+                amountOfPackets = receivedDataO.size / 50000;
+
+                if ((receivedDataO.size % 50000) != 0)
+                {
+                    amountOfPackets += 1;
+                }
+            }
+
+            int current;
+            if (inp == null)
+            {
+                //error
+            }
+            else
+            {
+                current = inp.Count;
+
+                inp.Add(new SaveFilePackets(current));
+                inp[current].AOP = amountOfPackets;
+                inp[current].FileData = receivedDataO;
+                string uniqueID = Convert.ToString(current);
+                return uniqueID + ":" + Convert.ToString(amountOfPackets);
+            }
+
+
+            return "error";
+            
+            
         }
     }
 }

@@ -12,7 +12,11 @@ namespace WebService
         public int id { get; set; }
         [JsonProperty("name")]
         public string name { get; set; }
+        [JsonProperty("path")]
+        public string path { get; set; }
         [JsonProperty("base64")]
         public string base64 { get; set; }
+        [JsonProperty("size")]
+        public int size { get; set; }
     }
 }

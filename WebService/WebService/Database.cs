@@ -8,8 +8,9 @@ namespace WebService
 {
     public class Database
     {
-        SqlConnection connection = new SqlConnection("Data Source=JANLAPTOP;Initial Catalog=fileshare;Integrated Security=True");
+        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionDries); // maak je eigen connectionstring en verander de naam
         SqlCommand cmd = new SqlCommand();
+        SqlCommand cmd2 = new SqlCommand();
 
         public void GetData()
         {
@@ -61,6 +62,50 @@ namespace WebService
                 connection.Close();
             }
 
+        }
+
+        public bool AddRecord(Data fileData)
+        {
+            try
+            {
+                connection.Open();
+                cmd = connection.CreateCommand();
+                cmd.CommandText = "INSERT INTO [dbo].[fileTable] ([fileName],[filePath]) OUTPUT inserted.fileID VALUES (@filename, @filepath)";
+
+                cmd.Parameters.AddWithValue("@filename", fileData.name);
+                cmd.Parameters.AddWithValue("@filepath", fileData.path);
+
+
+                Guid uniqueid = (Guid)cmd.ExecuteScalar();
+
+
+                cmd2 = connection.CreateCommand();
+                cmd2.CommandText = "INSERT INTO [dbo].[files](fileID, ActualFile)SELECT '@uniqueid', BulkColumn FROM OPENROWSET(BULK '@filepath', SINGLE_BLOB) as f;";
+
+                cmd2.Parameters.AddWithValue("@uniqueid", uniqueid);
+                cmd2.Parameters.AddWithValue("@filepath", fileData.path);
+
+                if (cmd.ExecuteNonQuery() == 1)
+                {
+                    // querry gedaan
+
+                    return true;
+                }
+                else
+                {
+                    //query niet gedaan
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                //geeft error aan foutmelding object?
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+            }
         }
     }
 }

@@ -30,11 +30,19 @@ namespace WebService
         string GetFile(Stream Data);
 
         [OperationContract]
+         [WebInvoke(Method = "POST",
+             ResponseFormat = WebMessageFormat.Json,
+             RequestFormat = WebMessageFormat.Json,
+             BodyStyle = WebMessageBodyStyle.WrappedRequest, // als ge een error krijgt bij compillen herschrijf WrappedRequest (unknown bug)
+             UriTemplate = "Json/SaveFile/{id}/{max}/{current}")]
+         string SaveFile(Stream Data, string id, string max, string current);
+
+        [OperationContract]
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
-            UriTemplate = "Json/SaveFile")]
-        string SaveFile(Stream Data);
+            UriTemplate = "Json/Checkdiv")]
+        string CheckDivisionOfData(Stream Data);
     }
 }

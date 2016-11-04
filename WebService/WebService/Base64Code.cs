@@ -20,7 +20,7 @@ namespace WebService
             return Tuple.Create(bitarray, naam);
         }
 
-        public void saveFile(byte[] tempBytes, string fileName)
+        public string saveFile(byte[] tempBytes, string fileName)
         {
             string filePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\" + fileName;
             string fileNameOnly = Path.GetFileNameWithoutExtension(filePath);
@@ -37,6 +37,7 @@ namespace WebService
             Debug.WriteLine(newFullPath);
 
             File.WriteAllBytes(newFullPath, tempBytes);
+            return newFullPath;
         }
     }
 }
