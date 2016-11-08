@@ -123,5 +123,19 @@ namespace WebService
             
             
         }
+
+        public string GetFileNames(Stream Data)
+        {
+            JsonCode json = new JsonCode();
+            Database database = new Database();
+            List<Item> itemlist = database.GetItems();
+            //Debug.WriteLine("test");
+            string reply = json.Serialize<List<Item>>(itemlist);
+
+            List<Item> itemlistdebug = json.Deserialize<List<Item>>(reply);
+
+            return reply;
+            
+        }
     }
 }

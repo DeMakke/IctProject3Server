@@ -13,7 +13,7 @@ namespace WebService
         {
             string naam = o.name;
             //o.base64 = o.base64.Remove('"');
-            Debug.WriteLine(o.base64);
+            //Debug.WriteLine(o.base64);
             byte[] bitarray = Convert.FromBase64String(o.base64);
             
 

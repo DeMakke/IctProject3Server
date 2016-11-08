@@ -85,17 +85,9 @@ namespace WebService
                 cmd2.Parameters.AddWithValue("@uniqueid", uniqueid);
                 cmd2.Parameters.AddWithValue("@filepath", fileData.path);
 
-                if (cmd.ExecuteNonQuery() == 1)
-                {
-                    // querry gedaan
+                cmd2.ExecuteNonQuery();
+                return true;
 
-                    return true;
-                }
-                else
-                {
-                    //query niet gedaan
-                    return false;
-                }
             }
             catch (Exception ex)
             {
@@ -105,7 +97,40 @@ namespace WebService
             finally
             {
                 connection.Close();
+                
             }
+        }
+
+        public List<Item> GetItems()
+        {
+            List<Item> itemlist = new List<Item>();
+
+            connection.Open();
+
+            cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT [fileID],[fileName] FROM [dbo].[fileTable]";
+
+            SqlDataReader reader;
+            reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Item currentItem = new Item();
+                currentItem.id = reader.GetGuid(0);
+                currentItem.name = reader.GetString(1);
+
+                itemlist.Add(currentItem);
+            }
+            reader.Close();
+            connection.Close();
+
+            return itemlist;
+        }
+
+        public void getSelectedItem(Guid uniqueid)
+        {
+
+            //return file;
         }
     }
 }

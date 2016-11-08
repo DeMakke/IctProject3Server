@@ -44,5 +44,14 @@ namespace WebService
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "Json/Checkdiv")]
         string CheckDivisionOfData(Stream Data);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "Json/GetFileNames")]
+        string GetFileNames(Stream Data);
+        
     }
 }
