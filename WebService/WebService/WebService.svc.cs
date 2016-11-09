@@ -43,6 +43,23 @@ namespace WebService
             return Json;
         }
 
+        //17.	server functie die json succes string terugstuurt naar client (aanpassen)
+        
+        public string DeleteFile(Stream Data)
+        {
+            JsonCode json = new JsonCode();            
+            Succes succes = new Succes();
+            Data file = new Data();
+            Database db = new Database();
+            //geen idee of dit werkt
+            StreamReader reader = new StreamReader(Data);
+            string JSONData = reader.ReadToEnd();
+            file = json.Deserialize<Data>(JSONData);
+
+            succes.value = db.DeleteData(file);
+            return json.JsonCoding(succes);
+        }
+
         public string SaveFile(Stream data, string id,string max, string current)
         {
             StreamReader reader = new StreamReader(data);

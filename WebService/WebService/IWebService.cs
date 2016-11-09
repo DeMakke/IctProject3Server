@@ -52,6 +52,16 @@ namespace WebService
             BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "Json/GetFileNames")]
         string GetFileNames(Stream Data);
-        
+
+
+        //12.	functie server die ontvangt en json string uitgeeft (functie aanwezig maar aanpassingen nodig)
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.WrappedRequest,
+            UriTemplate = "Json/DeleteFile")]
+        string DeleteFile(Stream Data);
+
     }
 }
