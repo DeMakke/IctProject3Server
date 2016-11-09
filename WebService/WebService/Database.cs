@@ -33,24 +33,28 @@ namespace WebService
             connection.Close();
         }
 
-        public bool DeleteData(Data file)
+        public bool DeleteData(Item file)
         {
             try
             {
                 connection.Open();
                 cmd = connection.CreateCommand();
-                cmd.CommandText = "DELETE " + file.name + " FROM fileTable";
+                cmd.CommandText = "DELETE @fileID FROM fileTable";
+                cmd.Parameters.AddWithValue("@fileID", file.id);
 
-                if (cmd.ExecuteNonQuery() == 1)
-                {
-                    // querry gedaan
-                    return true;
-                }
-                else
-                {
-                    //query niet gedaan
-                    return false;
-                }
+                cmd.ExecuteNonQuery();
+                return true;
+
+                //if (cmd.ExecuteNonQuery() == 1)
+                //{
+                //    // querry gedaan
+                //    return true;
+                //}
+                //else
+                //{
+                //    //query niet gedaan
+                //    return false;
+                //}
             }
             catch (Exception ex)
             {

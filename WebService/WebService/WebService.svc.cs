@@ -49,12 +49,12 @@ namespace WebService
         {
             JsonCode json = new JsonCode();            
             Succes succes = new Succes();
-            Data file = new Data();
+            Item file = new Item();
             Database db = new Database();
             //geen idee of dit werkt
             StreamReader reader = new StreamReader(Data);
             string JSONData = reader.ReadToEnd();
-            file = json.Deserialize<Data>(JSONData);
+            file = json.Deserialize<Item>(JSONData);
 
             succes.value = db.DeleteData(file);
             return json.JsonCoding(succes);
