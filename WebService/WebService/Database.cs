@@ -38,9 +38,9 @@ namespace WebService
             try
             {
                 connection.Open();
-                cmd = connection.CreateCommand();
-                cmd.CommandText = "DELETE @fileID FROM fileTable";
-                cmd.Parameters.AddWithValue("@fileID", file.id);
+                cmd = connection.CreateCommand();               
+                cmd.CommandText = "DELETE FROM fileTable WHERE fileName = '@fileName'";//later aanpassen met "and user  = '' ofzo 
+                cmd.Parameters.AddWithValue("@fileName", file.name);               
 
                 cmd.ExecuteNonQuery();
                 return true;
