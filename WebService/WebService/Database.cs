@@ -39,26 +39,21 @@ namespace WebService
             {
                 connection.Open();
                 cmd = connection.CreateCommand();               
-                cmd.CommandText = "DELETE FROM fileTable WHERE fileName = '@fileName'";//later aanpassen met "and user  = '' ofzo 
-                cmd.Parameters.AddWithValue("@fileName", file.name);               
+                cmd.CommandText = "DELETE FROM fileTable WHERE fileID = @fileID";//later aanpassen met "and user  = '' ofzo 
+                cmd.Parameters.AddWithValue("@fileID", file.id);               
 
-                cmd.ExecuteNonQuery();
-                return true;
-
-                //if (cmd.ExecuteNonQuery() == 1)
-                //{
-                //    // querry gedaan
-                //    return true;
-                //}
-                //else
-                //{
-                //    //query niet gedaan
-                //    return false;
-                //}
+                int result = cmd.ExecuteNonQuery();
+                if (result >= 1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception ex)
             {
-                //geeft error aan foutmelding object?
                 return false;
             }
             finally

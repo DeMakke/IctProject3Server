@@ -16,6 +16,8 @@ namespace WebService
     public class WebService : IWebService
     {
         public static List<SaveFilePackets> inp = new List<SaveFilePackets>();
+        JsonCode json = new JsonCode();
+        Database db = new Database();
 
         public void GetData()
         {
@@ -47,16 +49,13 @@ namespace WebService
         
         public string DeleteFile(Stream Data)
         {
-            JsonCode json = new JsonCode();            
             Succes succes = new Succes();
-            Item file = new Item();
-            Database db = new Database();
-            //geen idee of dit werkt
+            Item item = new Item();
             StreamReader reader = new StreamReader(Data);
-            string JSONData = reader.ReadToEnd();
-            file = json.Deserialize<Item>(JSONData);
 
-            succes.value = db.DeleteData(file);
+            string JSONData = reader.ReadToEnd();
+            item = json.JsonDeCodingItem(JSONData);
+            succes.value = db.DeleteData(item);
             return json.JsonCoding(succes);
         }
 
