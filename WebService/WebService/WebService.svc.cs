@@ -43,7 +43,7 @@ namespace WebService
             return Json;
         }
 
-        //17.	server functie die json succes string terugstuurt naar client (aanpassen)
+        //17.	server functie die json xxx succes string terugstuurt naar client (aanpassen)
         
         public string DeleteFile(Stream Data)
         {
