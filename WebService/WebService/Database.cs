@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Web;
 
 namespace WebService
@@ -12,6 +13,43 @@ namespace WebService
         SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionDries); // maak je eigen connectionstring en verander de naam
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
+
+
+        //adding a user to the db for testing purposes
+        public bool SetUser() //call to this function is found in the WebServcice.svc.cs inside the ValidateUser function
+        {
+            try
+            {
+                connection.Open();
+                cmd = connection.CreateCommand();
+                cmd.CommandText = "INSERT INTO [dbo].[Users] ([UserID],[UserName],[Password]) VALUES (@userid,@username, @password)";
+                Guid id = new Guid();
+                cmd.Parameters.AddWithValue("@userid", id);
+                cmd.Parameters.AddWithValue("@username", "Frederik");
+                cmd.Parameters.AddWithValue("@password", "123");
+
+                int result = cmd.ExecuteNonQuery();
+                if (result >= 1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+
+            }
+        }
+
 
         public void GetData()
         {
@@ -143,5 +181,46 @@ namespace WebService
 
             //return file;
         }
+
+        public User ValidateUser(User user)
+        {
+            connection.Open();
+
+            cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT [Password] FROM [dbo].[Users] WHERE UserName = @username";
+            cmd.Parameters.AddWithValue("@username", user.name);
+
+            string password = "";
+            Md5Class hashing = new Md5Class();
+            bool checkPassword = false;
+            Random random = new Random();
+            SqlDataReader reader;
+            reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                password = reader.GetString(0);
+            }
+            reader.Close();
+            connection.Close();
+            using (MD5 md5Hash = MD5.Create())
+            {
+                checkPassword = hashing.VerifyMd5Hash(md5Hash, password, user.hash);
+            }
+            if (checkPassword)
+            {
+                user.token = random.Next(1, 8999);
+            }
+            else
+            {
+                user.token = 9999;
+            }
+
+            return user;
+        }
+
+
+
+
+
     }
 }
