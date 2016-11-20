@@ -63,5 +63,15 @@ namespace WebService
             UriTemplate = "Json/DeleteFile")]
         string DeleteFile(Stream Data);
 
+
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.WrappedRequest,
+            UriTemplate = "Json/ValidateUser")]
+        string ValidateUser(Stream Data);
+
+
     }
 }

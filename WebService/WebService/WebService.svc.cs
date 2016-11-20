@@ -18,7 +18,7 @@ namespace WebService
         public static List<SaveFilePackets> inp = new List<SaveFilePackets>();
         JsonCode json = new JsonCode();
         Database db = new Database();
-
+        
         public void GetData()
         {
             Database databseInterface = new Database();
@@ -153,5 +153,22 @@ namespace WebService
             return reply;
             
         }
+
+        public String ValidateUser(Stream data)
+        {
+            //db.SetUser();    //initialise a user in the db for testing purposes, only do this once!
+            StreamReader reader = new StreamReader(data);
+            string JSONData = reader.ReadToEnd();
+            User user = json.JsonDeCodingUser(JSONData);
+
+            user = db.ValidateUser(user);
+            string result = json.JsonCoding(user);
+            return result;
+
+        }
+
+
+
+
     }
 }

@@ -48,6 +48,17 @@ namespace WebService
             string json = JsonConvert.SerializeObject(item);
             return json;
         }
+        public User JsonDeCodingUser(String json)
+        {
+            User user = JsonConvert.DeserializeObject<User>(json);
+            return user;
+        }
+
+        public String JsonCoding(User user)
+        {
+            string json = JsonConvert.SerializeObject(user);
+            return json;
+        }
 
         public FileList JsonDeCodingFileList(String json)
         {
