@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 
@@ -8,7 +9,7 @@ namespace WebService
 {
     public class Database
     {
-        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionFrederik); // maak je eigen connectionstring en verander de naam
+        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionDries); // maak je eigen connectionstring en verander de naam
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
 
@@ -40,10 +41,15 @@ namespace WebService
                 connection.Open();
                 cmd = connection.CreateCommand();               
                 cmd.CommandText = "DELETE FROM fileTable WHERE fileID = @fileID"; 
-                cmd.Parameters.AddWithValue("@fileID", file.id);               
-
+                cmd.Parameters.AddWithValue("@fileID", file.id);
                 int result = cmd.ExecuteNonQuery();
-                if (result >= 1)
+
+                cmd2 = connection.CreateCommand();
+                cmd2.CommandText = "DELETE FROM [dbo].[files] WHERE fileID = @fileID";
+                cmd2.Parameters.AddWithValue("@fileID", file.id);
+
+                int result2 = cmd2.ExecuteNonQuery();
+                if (result >= 1 && result2 >=1)
                 {
                     return true;
                 }
@@ -77,16 +83,22 @@ namespace WebService
 
                 Guid uniqueid = (Guid)cmd.ExecuteScalar();
 
-
                 cmd2 = connection.CreateCommand();
-                cmd2.CommandText = "INSERT INTO [dbo].[files](fileID, ActualFile)SELECT '@uniqueid', BulkColumn FROM OPENROWSET(BULK '@filepath', SINGLE_BLOB) as f;";
+                cmd2.CommandText = "INSERT INTO [dbo].[files](fileID, ActualFile)SELECT '"+Convert.ToString(uniqueid)+"', BulkColumn FROM OPENROWSET(BULK '"+ fileData.path + "', SINGLE_BLOB) as f;";
 
-                cmd2.Parameters.AddWithValue("@uniqueid", uniqueid);
-                cmd2.Parameters.AddWithValue("@filepath", fileData.path);
+                //cmd2.Parameters.AddWithValue("@uniqueID", (Guid)uniqueid);
+                
+                //cmd2.Parameters.AddWithValue("@filepath", fileData.path);
 
                 cmd2.ExecuteNonQuery();
+
                 return true;
 
+            }
+            catch (SqlException sqlex)
+            {
+                Debug.WriteLine(sqlex.Message);
+                return false;
             }
             catch (Exception ex)
             {

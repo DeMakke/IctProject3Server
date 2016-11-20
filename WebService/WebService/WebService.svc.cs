@@ -117,6 +117,10 @@ namespace WebService
                     amountOfPackets += 1;
                 }
             }
+            else
+            {
+                amountOfPackets = 1;
+            }
 
             int current;
             if (inp == null)
