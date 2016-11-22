@@ -107,7 +107,7 @@ namespace WebService
 
         public List<Item> GetItems()
         {
-            List<Item> itemlist = new List<Item>();
+            List<Item> itemlist = new List<Item>(); 
 
             connection.Open();
 
