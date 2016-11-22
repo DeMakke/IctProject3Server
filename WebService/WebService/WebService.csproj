@@ -116,6 +116,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="SaveFilePackets.cs" />
+    <Compile Include="Session.cs" />
     <Compile Include="Succes.cs" />
     <Compile Include="User.cs" />
     <Compile Include="WebService.svc.cs">

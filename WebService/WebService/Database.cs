@@ -25,7 +25,7 @@ namespace WebService
                 cmd.CommandText = "INSERT INTO [dbo].[Users] ([UserID],[UserName],[Password]) VALUES (@userid,@username, @password)";
                 Guid id = new Guid();
                 cmd.Parameters.AddWithValue("@userid", id);
-                cmd.Parameters.AddWithValue("@username", "Frederik");
+                cmd.Parameters.AddWithValue("@username", "Dries");
                 cmd.Parameters.AddWithValue("@password", "123");
 
                 int result = cmd.ExecuteNonQuery();

@@ -26,32 +26,32 @@ namespace WebService
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
-            UriTemplate = "Json/GetFile")]
-        string GetFile(Stream Data);
+            UriTemplate = "Json/GetFile/{token}")]
+        string GetFile(Stream Data, string token);
 
         [OperationContract]
          [WebInvoke(Method = "POST",
              ResponseFormat = WebMessageFormat.Json,
              RequestFormat = WebMessageFormat.Json,
              BodyStyle = WebMessageBodyStyle.WrappedRequest, // als ge een error krijgt bij compillen herschrijf WrappedRequest (unknown bug)
-             UriTemplate = "Json/SaveFile/{id}/{max}/{current}")]
-         string SaveFile(Stream Data, string id, string max, string current);
+             UriTemplate = "Json/SaveFile/{id}/{max}/{current}/{token}")]
+         string SaveFile(Stream Data, string id, string max, string current,string token);
 
         [OperationContract]
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
-            UriTemplate = "Json/Checkdiv")]
-        string CheckDivisionOfData(Stream Data);
+            UriTemplate = "Json/Checkdiv/{token}")]
+        string CheckDivisionOfData(Stream Data, string token);
 
         [OperationContract]
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "Json/GetFileNames")]
-        string GetFileNames(Stream Data);
+            UriTemplate = "Json/GetFileNames/{token}")]
+        string GetFileNames(Stream Data, string token);
 
 
         //12.	functie server die ontvangt en json string uitgeeft (functie aanwezig maar aanpassingen nodig)
@@ -60,8 +60,8 @@ namespace WebService
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
-            UriTemplate = "Json/DeleteFile")]
-        string DeleteFile(Stream Data);
+            UriTemplate = "Json/DeleteFile/{token}")]
+        string DeleteFile(Stream Data, string token);
 
 
         [OperationContract]
@@ -69,8 +69,8 @@ namespace WebService
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
-            UriTemplate = "Json/ValidateUser")]
-        string ValidateUser(Stream Data);
+            UriTemplate = "Json/ValidateUser/{token}")]
+        string ValidateUser(Stream Data,string token);
 
 
     }
