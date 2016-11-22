@@ -1,16 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Web;
 
 namespace WebService
 {
     public class Database
     {
-        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionFrederik); // maak je eigen connectionstring en verander de naam
+        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionDries); // maak je eigen connectionstring en verander de naam
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
+
+
+        //adding a user to the db for testing purposes
+        public bool SetUser() //call to this function is found in the WebServcice.svc.cs inside the ValidateUser function
+        {
+            try
+            {
+                connection.Open();
+                cmd = connection.CreateCommand();
+                cmd.CommandText = "INSERT INTO [dbo].[Users] ([UserID],[UserName],[Password]) VALUES (@userid,@username, @password)";
+                Guid id = new Guid();
+                cmd.Parameters.AddWithValue("@userid", id);
+                cmd.Parameters.AddWithValue("@username", "Dries");
+                cmd.Parameters.AddWithValue("@password", "123");
+
+                int result = cmd.ExecuteNonQuery();
+                if (result >= 1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+
+            }
+        }
+
 
         public void GetData()
         {
@@ -39,26 +78,26 @@ namespace WebService
             {
                 connection.Open();
                 cmd = connection.CreateCommand();               
-                cmd.CommandText = "DELETE FROM fileTable WHERE fileName = '@fileName'";//later aanpassen met "and user  = '' ofzo 
-                cmd.Parameters.AddWithValue("@fileName", file.name);               
+                cmd.CommandText = "DELETE FROM fileTable WHERE fileID = @fileID"; 
+                cmd.Parameters.AddWithValue("@fileID", file.id);
+                int result = cmd.ExecuteNonQuery();
 
-                cmd.ExecuteNonQuery();
-                return true;
+                cmd2 = connection.CreateCommand();
+                cmd2.CommandText = "DELETE FROM [dbo].[files] WHERE fileID = @fileID";
+                cmd2.Parameters.AddWithValue("@fileID", file.id);
 
-                //if (cmd.ExecuteNonQuery() == 1)
-                //{
-                //    // querry gedaan
-                //    return true;
-                //}
-                //else
-                //{
-                //    //query niet gedaan
-                //    return false;
-                //}
+                int result2 = cmd2.ExecuteNonQuery();
+                if (result >= 1 && result2 >=1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception ex)
             {
-                //geeft error aan foutmelding object?
                 return false;
             }
             finally
@@ -82,16 +121,22 @@ namespace WebService
 
                 Guid uniqueid = (Guid)cmd.ExecuteScalar();
 
-
                 cmd2 = connection.CreateCommand();
-                cmd2.CommandText = "INSERT INTO [dbo].[files](fileID, ActualFile)SELECT '@uniqueid', BulkColumn FROM OPENROWSET(BULK '@filepath', SINGLE_BLOB) as f;";
+                cmd2.CommandText = "INSERT INTO [dbo].[files](fileID, ActualFile)SELECT '"+Convert.ToString(uniqueid)+"', BulkColumn FROM OPENROWSET(BULK '"+ fileData.path + "', SINGLE_BLOB) as f;";
 
-                cmd2.Parameters.AddWithValue("@uniqueid", uniqueid);
-                cmd2.Parameters.AddWithValue("@filepath", fileData.path);
+                //cmd2.Parameters.AddWithValue("@uniqueID", (Guid)uniqueid);
+                
+                //cmd2.Parameters.AddWithValue("@filepath", fileData.path);
 
                 cmd2.ExecuteNonQuery();
+
                 return true;
 
+            }
+            catch (SqlException sqlex)
+            {
+                Debug.WriteLine(sqlex.Message);
+                return false;
             }
             catch (Exception ex)
             {
@@ -136,5 +181,46 @@ namespace WebService
 
             //return file;
         }
+
+        public User ValidateUser(User user)
+        {
+            connection.Open();
+
+            cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT [Password] FROM [dbo].[Users] WHERE UserName = @username";
+            cmd.Parameters.AddWithValue("@username", user.name);
+
+            string password = "";
+            Md5Class hashing = new Md5Class();
+            bool checkPassword = false;
+            Random random = new Random();
+            SqlDataReader reader;
+            reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                password = reader.GetString(0);
+            }
+            reader.Close();
+            connection.Close();
+            using (MD5 md5Hash = MD5.Create())
+            {
+                checkPassword = hashing.VerifyMd5Hash(md5Hash, password, user.hash);
+            }
+            if (checkPassword)
+            {
+                user.token = random.Next(1, 8999);
+            }
+            else
+            {
+                user.token = 9999;
+            }
+
+            return user;
+        }
+
+
+
+
+
     }
 }

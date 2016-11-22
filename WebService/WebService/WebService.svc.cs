@@ -16,7 +16,10 @@ namespace WebService
     public class WebService : IWebService
     {
         public static List<SaveFilePackets> inp = new List<SaveFilePackets>();
-
+        public static List<Session> ActiveUsers = new List<Session>();
+        JsonCode json = new JsonCode();
+        Database db = new Database();
+        
         public void GetData()
         {
             Database databseInterface = new Database();
@@ -32,127 +35,210 @@ namespace WebService
             return "Positive response";
         }
 
-        public string GetFile(Stream Data)
+        public string GetFile(Stream Data, string token)
         {
-            string Json;
-            Data data = new Data();
-            JsonCode json = new JsonCode();
-            data.base64 = "amEgbmVlIGlrIGdhIG1pam4gcGFzIG5pZSBkb29yc3R1cmVu";
-            data.name = "tsserver.txt";
-            Json = json.JsonCoding(data);
-            return Json;
+            if (CheckUserStatus(token))
+            {
+                    string Json;
+                    Data data = new Data();
+                    JsonCode json = new JsonCode();
+                    data.base64 = "amEgbmVlIGlrIGdhIG1pam4gcGFzIG5pZSBkb29yc3R1cmVu";
+                    data.name = "tsserver.txt";
+                    Json = json.JsonCoding(data);
+                    return Json;
+            }
+            else
+            {
+                return "user is not logged in";
+            }
         }
 
         //17.	server functie die json xxx succes string terugstuurt naar client (aanpassen)
         
-        public string DeleteFile(Stream Data)
+        public string DeleteFile(Stream Data, string token)
         {
-            JsonCode json = new JsonCode();            
-            Succes succes = new Succes();
-            Item file = new Item();
-            Database db = new Database();
-            //geen idee of dit werkt
-            StreamReader reader = new StreamReader(Data);
-            string JSONData = reader.ReadToEnd();
-            file = json.Deserialize<Item>(JSONData);
-
-            succes.value = db.DeleteData(file);
-            return json.JsonCoding(succes);
-        }
-
-        public string SaveFile(Stream data, string id,string max, string current)
-        {
-            StreamReader reader = new StreamReader(data);
-            string JSONData = reader.ReadToEnd();
-
-            
-            Base64Code base64 = new Base64Code();
-
-
-            inp[inp.FindIndex(x => x.id == Convert.ToInt16(id))].base64stringpackets.Add(JSONData);
-
-            if (current == max)
+            if (CheckUserStatus(token))
             {
+                    Succes succes = new Succes();
+                    Item item = new Item();
+                    StreamReader reader = new StreamReader(Data);
 
-                inp[Convert.ToInt16(id)].FileData.base64 = "";
-
-                foreach (string item in inp[Convert.ToInt16(id)].base64stringpackets)
-                {
-                    inp[Convert.ToInt16(id)].FileData.base64 += item;
-                }
-                Tuple<byte[],string> filebytes = base64.DeSerializeBase64(inp[Convert.ToInt16(id)].FileData);
-                inp[Convert.ToInt16(id)].FileData.path = base64.saveFile(filebytes.Item1, inp[Convert.ToInt16(id)].FileData.name);
-
-                Database database = new Database();
-
-                bool status = database.AddRecord(inp[Convert.ToInt16(id)].FileData);
-                Debug.WriteLine(status);
-                JSONData = "OK" + inp[Convert.ToInt16(id)].base64stringpackets.Count;
-                
-                inp.RemoveAll(x => x.id == Convert.ToInt16(id));
-                
-            }
-            
-            return JSONData;
-        }
-
-        public string CheckDivisionOfData(Stream Data)
-        {
-
-            StreamReader reader = new StreamReader(Data);
-            JsonCode json = new JsonCode();
-            string JSONData = reader.ReadToEnd();
-
-
-            Data receivedDataO = json.Deserialize<Data>(JSONData);
-
-            int amountOfPackets = 0;
-
-
-            if (receivedDataO.size > 50000)
-            {
-                amountOfPackets = receivedDataO.size / 50000;
-
-                if ((receivedDataO.size % 50000) != 0)
-                {
-                    amountOfPackets += 1;
-                }
-            }
-
-            int current;
-            if (inp == null)
-            {
-                //error
+                    string JSONData = reader.ReadToEnd();
+                    item = json.JsonDeCodingItem(JSONData);
+                    succes.value = db.DeleteData(item);
+                    return json.JsonCoding(succes);
             }
             else
             {
-                current = inp.Count;
+                return "user is not logged in";
+            }
+        }
 
-                inp.Add(new SaveFilePackets(current));
-                inp[current].AOP = amountOfPackets;
-                inp[current].FileData = receivedDataO;
-                string uniqueID = Convert.ToString(current);
-                return uniqueID + ":" + Convert.ToString(amountOfPackets);
+        public string SaveFile(Stream data, string id,string max, string current,string token)
+        {
+            if (CheckUserStatus(token))
+            {
+                    StreamReader reader = new StreamReader(data);
+                    string JSONData = reader.ReadToEnd();
+
+            
+                    Base64Code base64 = new Base64Code();
+
+
+                    inp[inp.FindIndex(x => x.id == Convert.ToInt16(id))].base64stringpackets.Add(JSONData);
+
+                    if (current == max)
+                    {
+
+                        inp[Convert.ToInt16(id)].FileData.base64 = "";
+
+                        foreach (string item in inp[Convert.ToInt16(id)].base64stringpackets)
+                        {
+                            inp[Convert.ToInt16(id)].FileData.base64 += item;
+                        }
+                        Tuple<byte[],string> filebytes = base64.DeSerializeBase64(inp[Convert.ToInt16(id)].FileData);
+                        inp[Convert.ToInt16(id)].FileData.path = base64.saveFile(filebytes.Item1, inp[Convert.ToInt16(id)].FileData.name);
+
+                        Database database = new Database();
+
+                        bool status = database.AddRecord(inp[Convert.ToInt16(id)].FileData);
+                        Debug.WriteLine(status);
+                        JSONData = "OK" + inp[Convert.ToInt16(id)].base64stringpackets.Count;
+                
+                        inp.RemoveAll(x => x.id == Convert.ToInt16(id));
+                
+                    }
+            
+                    return JSONData;
+
+            }
+            else
+            {
+                return "user is not logged in";
+            }
+        }
+
+        public string CheckDivisionOfData(Stream Data, string token)
+        {
+            if (CheckUserStatus(token))
+            {
+
+                    StreamReader reader = new StreamReader(Data);
+                    JsonCode json = new JsonCode();
+                    string JSONData = reader.ReadToEnd();
+
+
+                    Data receivedDataO = json.Deserialize<Data>(JSONData);
+
+                    int amountOfPackets = 0;
+
+
+                    if (receivedDataO.size > 50000)
+                    {
+                        amountOfPackets = receivedDataO.size / 50000;
+
+                        if ((receivedDataO.size % 50000) != 0)
+                        {
+                            amountOfPackets += 1;
+                        }
+                    }
+                    else
+                    {
+                        amountOfPackets = 1;
+                    }
+
+                    int current;
+                    if (inp == null)
+                    {
+                        //error
+                    }
+                    else
+                    {
+                        current = inp.Count;
+
+                        inp.Add(new SaveFilePackets(current));
+                        inp[current].AOP = amountOfPackets;
+                        inp[current].FileData = receivedDataO;
+                        string uniqueID = Convert.ToString(current);
+                        return uniqueID + ":" + Convert.ToString(amountOfPackets);
+                    }
+
+
+                    return "error";
+
+            }
+            else
+            {
+                return "user is not logged in";
             }
 
 
-            return "error";
-            
-            
         }
 
-        public string GetFileNames(Stream Data)
+        public string GetFileNames(Stream Data, string token)
         {
-            JsonCode json = new JsonCode();
-            Database database = new Database();
-            List<Item> itemlist = database.GetItems();
-            //Debug.WriteLine("test");
-            string reply = json.Serialize<List<Item>>(itemlist);
+            if (CheckUserStatus(token))
+            {
+                    JsonCode json = new JsonCode();
+                    Database database = new Database();
+                    List<Item> itemlist = database.GetItems();
+                    //Debug.WriteLine("test");
+                    string reply = json.Serialize<List<Item>>(itemlist);
 
-            List<Item> itemlistdebug = json.Deserialize<List<Item>>(reply);
+                    List<Item> itemlistdebug = json.Deserialize<List<Item>>(reply);
 
-            return reply;
-            
+                    return reply;
+            }
+            else
+            {
+                return "user is not logged in";
+            }
         }
-    }
+
+        public String ValidateUser(Stream data, string token)
+        {
+            //db.SetUser();    //initialise a user in the db for testing purposes, only do this once!
+            StreamReader reader = new StreamReader(data);
+            string JSONData = reader.ReadToEnd();
+            User user = json.JsonDeCodingUser(JSONData);
+
+            user = db.ValidateUser(user);
+                // begin code van ~dries
+            Session userToAdd = new Session(user.name, user.hash, user.token); //maakt de usersession aan op de server (dit is een childclass van User)
+            ActiveUsers.Add(userToAdd); // voegt de user toe aan de sessions op de server
+                // einde code dries
+
+            string result = json.JsonCoding(user);
+            return result;
+
+        }
+
+        // false = user is niet ingelogged of niet gevonden      true = user is ingelogged
+        public bool CheckUserStatus(string id)
+        {
+            try
+            {
+                Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(id));
+                int index = ActiveUsers.FindIndex(ActiveUsers => ActiveUsers.token == Convert.ToInt16(id));
+                ActiveUsers[index].Refresh();
+                if (session.Status == true)
+                {
+                    return true;
+                }
+                else
+                {
+                    ActiveUsers.RemoveAt(ActiveUsers.FindIndex(ActiveUsers => ActiveUsers.token == Convert.ToInt16(id)));
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            
+            
+
+        }
+
+}
 }
