@@ -69,6 +69,7 @@ namespace WebService
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "Json/GetUsers")]
+        string GetUsers(Stream Data);//moet deze data meegeven?
 
     }
 }
