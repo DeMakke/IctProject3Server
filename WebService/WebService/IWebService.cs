@@ -68,8 +68,7 @@ namespace WebService
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
-            UriTemplate = "Json/GetUsersData")]
-        string GetUsersData(Stream Data);
+            UriTemplate = "Json/GetUsers")]
 
     }
 }

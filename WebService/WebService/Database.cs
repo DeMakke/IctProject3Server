@@ -33,6 +33,28 @@ namespace WebService
             connection.Close();
         }
 
+        public List<Gebruiker> GetUsersData()//functie haalt gevens van alle gebruikers op
+        {
+            connection.Open();
+            cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT UserID, UserName FROM Users";
+            SqlDataReader reader;
+            reader = cmd.ExecuteReader();
+            Gebruiker user = new Gebruiker();
+            List<Gebruiker> UserList = new List<Gebruiker>();
+                       
+            while (reader.Read())
+            {
+                user.id = reader.GetGuid(0);
+                user.name = reader.GetString(1);
+                UserList.Add(user);
+            }
+            reader.Close();
+            connection.Close();
+            
+            return UserList;
+        }
+
         public bool DeleteData(Item file)
         {
             try

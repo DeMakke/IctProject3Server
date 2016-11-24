@@ -155,18 +155,23 @@ namespace WebService
             
         }
 
+        //sprint4 story 7
         public string GetUsers(Stream Data)
         {
-            JsonCode json = new JsonCode();
-            Succes succes = new Succes();
-            Item file = new Item();
+            JsonCode json = new JsonCode();                   
             Database db = new Database();
-            //geen idee of dit werkt
+            //geen idee of dit nodig is, query heeft niks nodig
             StreamReader reader = new StreamReader(Data);
             string JSONData = reader.ReadToEnd();
-            file = json.Deserialize<Item>(JSONData);
+            Item file = json.Deserialize<Item>(JSONData);
 
-            return json.JsonCoding(db.GetUsersData(file));
+
+
+            List<Gebruiker> gebruikerlist = db.GetUsersData();
+            string reply = json.Serialize<List<Gebruiker>>(gebruikerlist);
+
+            //return json.JsonCoding();
+            return reply;
         }
 
     }
