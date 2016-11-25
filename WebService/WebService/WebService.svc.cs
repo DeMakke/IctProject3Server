@@ -155,7 +155,7 @@ namespace WebService
             
         }
 
-        //sprint4 story 7
+        //sprint4 story 7 gebruikers afhalen
         public string GetUsers(Stream Data)
         {
             JsonCode json = new JsonCode();                   
@@ -172,6 +172,35 @@ namespace WebService
 
             //return json.JsonCoding();
             return reply;
+        }
+
+
+        //sprint4 story 7 bestanden delen
+        public string SetUsers(Stream Data, Guid id, string users)
+        {
+            JsonCode json = new JsonCode();
+            Database db = new Database();
+            Succes succes = new Succes();
+
+            //lijst met geselecteerde gebruikes deserialize
+            // bestand id ophalen
+            //functie van database uitvoeren
+            //succes object terug sturen
+
+            StreamReader reader = new StreamReader(Data);
+            string JSONData = reader.ReadToEnd();
+            List<Gebruiker>  geselecteerdeGebruikerlist = json.Deserialize<Gebruiker>(JSONData);
+
+            succes.value = db.SelectedUsers(id, geselecteerdeGebruikerlist);
+
+            //List<Gebruiker> geselecteerdeGebruikerlist = json.Deserialize<Gebruiker>(users);
+
+            //db.GetUsersData();
+            // string reply = json.Serialize<List<Gebruiker>>(gebruikerlist);
+
+            //return json.JsonCoding();
+            
+            return json.JsonCoding(succes);
         }
 
     }

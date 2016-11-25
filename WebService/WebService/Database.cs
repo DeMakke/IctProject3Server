@@ -153,6 +153,38 @@ namespace WebService
             return itemlist;
         }
 
+        public bool SelectedUsers(Guid uniqueid, List<Gebruiker> selectedUsers)
+        {
+            // file bool op public zetten?of doet maxim dit?
+            //insert/update lijst van geselecteerde gebruikers in database
+            // succes obj terugsturn
+
+            connection.Open();
+
+            cmd = connection.CreateCommand();
+            //cmd.CommandText = "SELECT [fileID],[fileName] FROM [dbo].[fileTable]";
+            //new
+
+            //hoe heet de boolian in de database??????Boolfile?
+            //cmd.CommandText = "UPDATE INTO [dbo].[files](Boolfile)SELECT '@uniqueid', BulkColumn FROM OPENROWSET(BULK '@filepath', SINGLE_BLOB) as f;";
+
+            //cmd.CommandText = "UPDATE [dbo].[files] SET Boolfile = true WHERE(uniqueid = '@uniqueid')";
+
+            cmd.Parameters.AddWithValue("@uniqueid", uniqueid);
+            cmd.Parameters.AddWithValue("@selectedUsers", fileData.path);
+
+            // ja buh query 's kank niet schrijven he
+            cmd.CommandText = "UPDATE [dbo].[files] SET gebruikers = true WHERE(uniqueid = '@uniqueid')";
+
+            cmd.Parameters.AddWithValue("@gebruikers", selectedUsers);
+
+            cmd.ExecuteNonQuery();
+           
+            return true;
+        }
+
+
+
         public void getSelectedItem(Guid uniqueid)
         {
 

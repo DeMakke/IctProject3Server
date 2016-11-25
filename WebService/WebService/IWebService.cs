@@ -63,13 +63,21 @@ namespace WebService
             UriTemplate = "Json/DeleteFile")]
         string DeleteFile(Stream Data);
 
-        [OperationContract]//story 7
+        [OperationContract]//sprint 4 story 7 gebruikers afhalen
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "Json/GetUsers")]
         string GetUsers(Stream Data);//moet deze data meegeven?
+
+        [OperationContract]//sprint 4 story 7 bestanden delen
+        [WebInvoke(Method = "POST",
+           ResponseFormat = WebMessageFormat.Json,
+           RequestFormat = WebMessageFormat.Json,
+           BodyStyle = WebMessageBodyStyle.WrappedRequest,
+           UriTemplate = "Json/SetUsers/{id}/{users}")]
+        string SetUsers(Stream Data, string id, string users);//moet deze data meegeven?
 
     }
 }
