@@ -155,21 +155,11 @@ namespace WebService
 
         public bool SelectedUsers(Guid fileid, List<Gebruiker> selectedUsers)
         {
-            // file bool op public zetten?of doet maxim dit?
-            //insert/update lijst van geselecteerde gebruikers in database
-            // succes obj terugsturn
-
+            /*
             connection.Open();
 
             cmd = connection.CreateCommand();
-            //cmd.CommandText = "SELECT [fileID],[fileName] FROM [dbo].[fileTable]";
-            //new
-
-            //hoe heet de boolian in de database??????Boolfile?
-            //cmd.CommandText = "UPDATE INTO [dbo].[files](Boolfile)SELECT '@uniqueid', BulkColumn FROM OPENROWSET(BULK '@filepath', SINGLE_BLOB) as f;";
-
-            //cmd.CommandText = "UPDATE [dbo].[files] SET Boolfile = true WHERE(uniqueid = '@uniqueid')";
-
+           
 
             foreach (Gebruiker user in selectedUsers) //jan
             {
@@ -180,6 +170,44 @@ namespace WebService
             }
 
             return true;
+            */
+
+            try
+            {
+                connection.Open();
+                cmd = connection.CreateCommand();
+
+                // file bool op public zetten?of doet maxim dit?
+                /*
+                cmd.CommandText = "UPDATE [dbo].[files] SET gebruikers = true WHERE(uniqueid = '@uniqueid')";
+
+                cmd.Parameters.AddWithValue("@gebruikers", selectedUsers);
+
+                cmd.ExecuteNonQuery();
+                */
+
+                //insert/update lijst van geselecteerde gebruikers in database
+                // succes obj terugsturn
+
+                // tussentabel? shareid, gebruikerid, fileid //gaat niet werken denk//query moet herschreven worden maar het idee derachter klopt
+
+                cmd.CommandText = "UPDATE [dbo].[shearedFiles] SET gebruikers = @gebruikers WHERE([dbo].[files].uniqueid = '@uniqueid')";//join toevoegen
+
+                cmd.Parameters.AddWithValue("@uniqueid", fileid);
+                cmd.Parameters.AddWithValue("@gebruikers", selectedUsers);
+
+                cmd.ExecuteNonQuery();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+            }
         }
 
 

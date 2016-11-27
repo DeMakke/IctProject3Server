@@ -177,7 +177,7 @@ namespace WebService
 
         //sprint4 story 7 bestanden delen
         public string SetUsers(Stream Data, Guid id, string users)
-        {
+        {/*
             JsonCode json = new JsonCode();
             Database db = new Database();
             Succes succes = new Succes();
@@ -200,6 +200,24 @@ namespace WebService
 
             //return json.JsonCoding();
             
+            return json.JsonCoding(succes);µ*/
+
+
+            JsonCode json = new JsonCode();
+            Database db = new Database();
+            Succes succes = new Succes();
+            StreamReader reader = new StreamReader(Data);
+            string JSONData = reader.ReadToEnd();
+
+
+            UserList userlist = new UserList();
+            userlist.users = json.JsonDeCodingUserList(JSONData);
+            List<Gebruiker> geselecteerdeGebruikerlist = userlist;
+
+            List<Gebruiker> geselecteerdeGebruikerlist = json.JsonDeCodingUserList(JSONData);//krijg dit niet geconvert
+
+            succes.value = db.SelectedUsers(id, geselecteerdeGebruikerlist);
+
             return json.JsonCoding(succes);
         }
 
