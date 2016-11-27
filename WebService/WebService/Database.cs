@@ -56,7 +56,35 @@ namespace WebService
             connection.Open();
 
             cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT * FROM fileTable";
+            cmd.CommandText = "SELECT [dbo].[fileTable].[fileID],[dbo].[fileTable].[fileName]" +
+                              "FROM [fileTable]" +
+                              "INNER JOIN [usersPerFile]" +
+                              "ON [fileTable].[fileID] = [usersPerFile].[fileID]" +
+                              //selecteer de eigen bestanden
+                              "WHERE UserID = LoginID" + //LoginID = ID van ingelogde gebruiker =/ gast
+                              "OR" +
+                              //selecteer de openbaar gedeelde bestanden
+                              "WHERE shareBoolean = TRUE" +
+                              "OR" +
+                              //selecteer de met loginID gedeelde bestanden
+                              "WHERE [usersPerFile].[userID] = [loginID]";
+
+            //selecteer de eigen bestanden
+            //"SELECT [fileID],[fileName]" +
+            //"FROM [dbo].[fileTable]" + 
+            //"WHERE UserID = LoginID" + //LoginID = ID van ingelogde gebruiker =/ gast
+            //"OR" +
+
+            //selecteer de openbaar gedeelde bestanden
+            //"WHERE shareBoolean = TRUE" +
+            //"OR" +
+
+            //selecteer de met loginID gedeelde bestanden
+            //"SELECT [fileID],[fileName]" +
+            //"FROM [dbo].[fileTable]" +
+            //"WHERE [dbo].[fileTable].[fileID] = [dbo].[usersPerFile].[fileID]" +
+            //"AND" +
+            //"WHERE [usersPerFile].[userID] = [loginID]";
 
             SqlDataReader reader;
             reader = cmd.ExecuteReader();
