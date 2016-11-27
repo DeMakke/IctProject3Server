@@ -185,11 +185,9 @@ namespace WebService
 
                 cmd.ExecuteNonQuery();
                 */
-
-                //insert/update lijst van geselecteerde gebruikers in database
-                // succes obj terugsturn
-
-                // tussentabel? shareid, gebruikerid, fileid //gaat niet werken denk//query moet herschreven worden maar het idee derachter klopt
+                
+                // tussentabel? shareid, gebruikerid, fileid //gaat niet werken denk
+                //query moet herschreven worden maar het idee derachter klopt, miss nen isert derbij en ze alle2 uitvoeren?
 
                 cmd.CommandText = "UPDATE [dbo].[shearedFiles] SET gebruikers = @gebruikers WHERE([dbo].[files].uniqueid = '@uniqueid')";//join toevoegen
 

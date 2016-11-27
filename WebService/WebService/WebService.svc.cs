@@ -175,51 +175,15 @@ namespace WebService
 
         //sprint4 story 7 bestanden delen
         public string SetUsers(Stream Data, Guid id)
-        {/*
+        {
             JsonCode json = new JsonCode();
             Database db = new Database();
             Succes succes = new Succes();
-
-            //lijst met geselecteerde gebruikes deserialize
-            // bestand id ophalen
-            //functie van database uitvoeren
-            //succes object terug sturen
-
-            StreamReader reader = new StreamReader(Data);
+            StreamReader reader = new StreamReader(Data);            
             string JSONData = reader.ReadToEnd();
-            List<Gebruiker>  geselecteerdeGebruikerlist = json.Deserialize<Gebruiker>(JSONData);
-
-            succes.value = db.SelectedUsers(id, geselecteerdeGebruikerlist);
-
-            //List<Gebruiker> geselecteerdeGebruikerlist = json.Deserialize<Gebruiker>(users);
-
-            //db.GetUsersData();
-            // string reply = json.Serialize<List<Gebruiker>>(gebruikerlist);
-
-            //return json.JsonCoding();
-            
-            return json.JsonCoding(succes);*/
-
-
-
-            //ok ff opnieuw :p
-
-            JsonCode json = new JsonCode();
-            Database db = new Database();
-            Succes succes = new Succes();
-            StreamReader reader = new StreamReader(Data);
             UserList userlist = new UserList();
-
-            string JSONData = reader.ReadToEnd();
-
             userlist = json.JsonDeCodingUserList(JSONData);
-
-            //List<Gebruiker> geselecteerdeGebruikerList = userlist.users;
-
-            //List<Gebruiker> geselecteerdeGebruikerList = json.JsonDeCodingUserList(JSONData);//krijg dit niet geconvert
-
-            succes.value = db.SelectedUsers(id, userlist.users);//of geselecteerdeGebruikerList
-
+            succes.value = db.SelectedUsers(id, userlist.users);
             return json.JsonCoding(succes);
         }
 
