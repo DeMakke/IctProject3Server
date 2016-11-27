@@ -153,7 +153,7 @@ namespace WebService
             return itemlist;
         }
 
-        public bool SelectedUsers(Guid uniqueid, List<Gebruiker> selectedUsers)
+        public bool SelectedUsers(Guid fileid, List<Gebruiker> selectedUsers)
         {
             // file bool op public zetten?of doet maxim dit?
             //insert/update lijst van geselecteerde gebruikers in database
@@ -170,16 +170,15 @@ namespace WebService
 
             //cmd.CommandText = "UPDATE [dbo].[files] SET Boolfile = true WHERE(uniqueid = '@uniqueid')";
 
-            cmd.Parameters.AddWithValue("@uniqueid", uniqueid);
-            cmd.Parameters.AddWithValue("@selectedUsers", fileData.path);
 
-            // ja buh query 's kank niet schrijven he
-            cmd.CommandText = "UPDATE [dbo].[files] SET gebruikers = true WHERE(uniqueid = '@uniqueid')";
+            foreach (Gebruiker user in selectedUsers) //jan
+            {
+                cmd.CommandText = "INSERT INTO [dbo].[usersPerFile] VALUES (@fileid,@user)";
+                cmd.Parameters.AddWithValue("@user", user);
+                cmd.Parameters.AddWithValue("@fileid", fileid);
+                cmd.ExecuteNonQuery();
+            }
 
-            cmd.Parameters.AddWithValue("@gebruikers", selectedUsers);
-
-            cmd.ExecuteNonQuery();
-           
             return true;
         }
 
