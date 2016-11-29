@@ -240,5 +240,17 @@ namespace WebService
 
         }
 
-}
+        public string PublicShare(Stream Data)
+        {
+            Database database = new Database();
+            JsonCode json = new JsonCode();
+            Succes succes = new Succes();
+            StreamReader reader = new StreamReader(Data);
+
+            string itemId = reader.ReadToEnd();
+            succes.value = database.ShareWithAll(itemId);
+            return json.JsonCoding(succes);
+        }
+
+    }
 }

@@ -72,6 +72,14 @@ namespace WebService
             UriTemplate = "Json/ValidateUser/{token}")]
         string ValidateUser(Stream Data,string token);
 
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "Json/PublicShare")]
+        string PublicShare(Stream Data);
+
 
     }
 }
