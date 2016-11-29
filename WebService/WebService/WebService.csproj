@@ -120,6 +120,7 @@
     <Compile Include="Session.cs" />
     <Compile Include="Succes.cs" />
     <Compile Include="User.cs" />
+    <Compile Include="UserList.cs" />
     <Compile Include="WebService.svc.cs">
       <DependentUpon>WebService.svc</DependentUpon>
     </Compile>

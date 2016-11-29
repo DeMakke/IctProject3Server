@@ -72,6 +72,17 @@ namespace WebService
             return json;
         }
 
+        public UserList JsonDeCodingUserList(String json)
+        {
+            UserList userList = JsonConvert.DeserializeObject<UserList>(json);
+            return userList;
+        }
+        public String JsonCodingUserList(UserList userList)
+        {
+            string json = JsonConvert.SerializeObject(userList);
+            return json;
+        }
+
         public string Serialize<T>(T obj)
         {
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(obj.GetType());

@@ -262,5 +262,27 @@ namespace WebService
         }
 
 
+        //sprint4 story 7 bestanden delen
+        public string SetUsers(Stream Data, string id, string token)
+        {
+            if (CheckUserStatus(token))
+            {
+                JsonCode json = new JsonCode();
+                Database db = new Database();
+                Succes succes = new Succes();
+                StreamReader reader = new StreamReader(Data);
+                string JSONData = reader.ReadToEnd();
+                UserList userlist = new UserList();
+                userlist = json.JsonDeCodingUserList(JSONData);
+                succes.value = db.SelectedUsers(id, userlist.users);
+                return json.JsonCoding(succes);
+            }
+
+            else
+            {
+                return "user is not logged in";
+            }
+        }
+
     }
 }
