@@ -235,10 +235,32 @@ namespace WebService
             {
                 return false;
             }
-            
-            
+             
+        }
+
+        public string GetUsers(Stream Data, string token)
+        {
+            if (CheckUserStatus(token))
+            {
+                JsonCode json = new JsonCode();
+                Database db = new Database();
+                StreamReader reader = new StreamReader(Data);
+
+                string JSONData = reader.ReadToEnd();
+                Item file = json.Deserialize<Item>(JSONData);
+
+                List<Gebruiker> gebruikerlist = db.GetUsersData();
+                string reply = json.Serialize<List<Gebruiker>>(gebruikerlist);
+
+                return reply;
+            }
+            else
+            {
+                return "user is not logged in";
+            }
 
         }
 
-}
+
+    }
 }

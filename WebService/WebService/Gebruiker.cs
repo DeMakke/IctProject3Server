@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Newtonsoft.Json;
 
 namespace WebService
 {
+
     public class Gebruiker
     {
-        [JsonProperty("id")]
-        public Guid id { get; set; }
-        [JsonProperty("name")]
-        public string name { get; set; }
+         [JsonProperty("id")]
+         public Guid id { get; set; }
+
+         [JsonProperty("name")]
+         public string name { get; set; }
     }
+    
 }

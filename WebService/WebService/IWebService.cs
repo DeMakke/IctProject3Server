@@ -77,7 +77,7 @@ namespace WebService
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
-            UriTemplate = "Json/GetUsers")]
+            UriTemplate = "Json/GetUsers/{token}")]
         string GetUsers(Stream Data);//moet deze data meegeven?
 
         [OperationContract]//sprint 4 story 7 bestanden delen
@@ -85,7 +85,7 @@ namespace WebService
            ResponseFormat = WebMessageFormat.Json,
            RequestFormat = WebMessageFormat.Json,
            BodyStyle = WebMessageBodyStyle.WrappedRequest,
-           UriTemplate = "Json/SetUsers/{id}")]
+           UriTemplate = "Json/SetUsers/{id}/{token}")]
         string SetUsers(Stream Data, string id);
 
 
