@@ -160,15 +160,14 @@ namespace WebService
         {
             JsonCode json = new JsonCode();                   
             Database db = new Database();
-            //geen idee of dit nodig is, query heeft niks nodig
             StreamReader reader = new StreamReader(Data);
+
             string JSONData = reader.ReadToEnd();
             Item file = json.Deserialize<Item>(JSONData);
 
             List<Gebruiker> gebruikerlist = db.GetUsersData();
             string reply = json.Serialize<List<Gebruiker>>(gebruikerlist);
 
-            //return json.JsonCoding();
             return reply;
         }
 

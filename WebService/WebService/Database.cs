@@ -96,7 +96,7 @@ namespace WebService
             {
                 connection.Open();
                 cmd = connection.CreateCommand();
-                cmd.CommandText = "INSERT INTO [dbo].[fileTable] ([fileName],[filePath]) OUTPUT inserted.fileID VALUES (@filename, @filepath)";
+                cmd.CommandText = "INSERT INTO [dbo].[fileTable] ([fileName],[filePath]) OUTPUT inserted. fileID VALUES (@filename, @filepath)";
 
                 cmd.Parameters.AddWithValue("@filename", fileData.name);
                 cmd.Parameters.AddWithValue("@filepath", fileData.path);
@@ -153,7 +153,7 @@ namespace WebService
             return itemlist;
         }
 
-        public bool SelectedUsers(Guid fileid, List<Gebruiker> selectedUsers)
+        public bool SelectedUsers(string fileid, List<Gebruiker> selectedUsers)
         {
             /*
             connection.Open();
@@ -198,7 +198,7 @@ namespace WebService
 
                 return true;
             }
-            catch (Exception)
+            catch (SqlException e)
             {
                 return false;
             }

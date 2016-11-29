@@ -77,7 +77,7 @@ namespace WebService
            RequestFormat = WebMessageFormat.Json,
            BodyStyle = WebMessageBodyStyle.WrappedRequest,
            UriTemplate = "Json/SetUsers/{id}")]
-        string SetUsers(Stream Data, Guid id);
+        string SetUsers(Stream Data, string id);
 
     }
 }
