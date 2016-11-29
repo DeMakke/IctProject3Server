@@ -12,6 +12,9 @@ namespace WebService
         [JsonProperty("name")]
         public string name { get; set; }
 
+        [JsonProperty("id")]
+        public string id { get; set; }
+
         [JsonProperty("hash")]
         public string hash { get; set; }
 

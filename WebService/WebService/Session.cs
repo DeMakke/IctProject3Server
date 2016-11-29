@@ -11,12 +11,13 @@ namespace WebService
         public bool Status { get; set; }
         private Timer SessionTimer = new Timer(1200000);
 
-        public Session(string rName, string rHash, int rToken)
+        public Session(string rName, string rHash, int rToken, string rid)
         {
             Status = true;
             name = rName;
             hash = rHash;
             token = rToken;
+            id = rid;
 
             SessionTimer.Enabled = true;
             SessionTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);

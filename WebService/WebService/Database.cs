@@ -51,23 +51,13 @@ namespace WebService
         }
 
 
-        public void GetData()
+        public List<Item> GetData(string Userid)
         {
+            List<Item> itemlist = new List<Item>();
             connection.Open();
 
             cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT [dbo].[fileTable].[fileID],[dbo].[fileTable].[fileName]" +
-                              "FROM [fileTable]" +
-                              "INNER JOIN [usersPerFile]" +
-                              "ON [fileTable].[fileID] = [usersPerFile].[fileID]" +
-                              //selecteer de eigen bestanden
-                              "WHERE UserID = LoginID" + //LoginID = ID van ingelogde gebruiker =/ gast
-                              "OR" +
-                              //selecteer de openbaar gedeelde bestanden
-                              "WHERE shareBoolean = TRUE" +
-                              "OR" +
-                              //selecteer de met loginID gedeelde bestanden
-                              "WHERE [usersPerFile].[userID] = [loginID]";
+            cmd.CommandText = "SELECT fileshare.dbo.fileTable.fileID, fileshare.dbo.fileTable.fileName FROM fileTable INNER JOIN fileshare.dbo.usersPerFile ON fileshare.dbo.fileTable.fileID = fileshare.dbo.usersPerFile.fileID WHERE fileshare.dbo.fileTable.UserID = '"+Userid+"' OR fileshare.dbo.usersPerFile.userID = '"+Userid+"';";
 
             //selecteer de eigen bestanden
             //"SELECT [fileID],[fileName]" +
@@ -95,9 +85,14 @@ namespace WebService
             {
                 id = reader.GetGuid(0);
                 name = reader.GetString(1);
+                Item currentItem = new Item();
+                currentItem.id = id;
+                currentItem.name = name;
+                itemlist.Add(currentItem);
             }
             reader.Close();
             connection.Close();
+            return itemlist;
         }
 
         public bool DeleteData(Item file)
@@ -109,13 +104,14 @@ namespace WebService
                 cmd.CommandText = "DELETE FROM fileTable WHERE fileID = @fileID"; 
                 cmd.Parameters.AddWithValue("@fileID", file.id);
                 int result = cmd.ExecuteNonQuery();
-
+                /*
                 cmd2 = connection.CreateCommand();
                 cmd2.CommandText = "DELETE FROM [dbo].[files] WHERE fileID = @fileID";
                 cmd2.Parameters.AddWithValue("@fileID", file.id);
 
                 int result2 = cmd2.ExecuteNonQuery();
-                if (result >= 1 && result2 >=1)
+                */
+                if (result >= 1)
                 {
                     return true;
                 }
@@ -215,18 +211,21 @@ namespace WebService
             connection.Open();
 
             cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT [Password] FROM [dbo].[Users] WHERE UserName = @username";
+            cmd.CommandText = "SELECT [Password], [UserId] FROM [dbo].[Users] WHERE UserName = @username";
             cmd.Parameters.AddWithValue("@username", user.name);
 
             string password = "";
+            string UserId = "";
             Md5Class hashing = new Md5Class();
             bool checkPassword = false;
             Random random = new Random();
             SqlDataReader reader;
+
             reader = cmd.ExecuteReader();
             while (reader.Read())
             {
                 password = reader.GetString(0);
+                UserId = Convert.ToString(reader.GetGuid(1));
             }
             reader.Close();
             connection.Close();
@@ -241,6 +240,7 @@ namespace WebService
             else
             {
                 user.token = 9999;
+                user.id = UserId;
             }
 
             return user;

@@ -24,7 +24,7 @@ namespace WebService
         {
             Database databseInterface = new Database();
 
-            databseInterface.GetData();
+            //databseInterface.GetData();
         }
 
         public string Default(Stream data)
@@ -181,9 +181,13 @@ namespace WebService
             {
                     JsonCode json = new JsonCode();
                     Database database = new Database();
-                    List<Item> itemlist = database.GetItems();
-                    //Debug.WriteLine("test");
-                    string reply = json.Serialize<List<Item>>(itemlist);
+
+                Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
+
+                //List<Item> itemlist = database.GetData(session.id);
+                List<Item> itemlist = database.GetItems();
+                //Debug.WriteLine("test");
+                string reply = json.Serialize<List<Item>>(itemlist);
 
                     List<Item> itemlistdebug = json.Deserialize<List<Item>>(reply);
 
@@ -204,7 +208,7 @@ namespace WebService
 
             user = db.ValidateUser(user);
                 // begin code van ~dries
-            Session userToAdd = new Session(user.name, user.hash, user.token); //maakt de usersession aan op de server (dit is een childclass van User)
+            Session userToAdd = new Session(user.name, user.hash, user.token, user.id); //maakt de usersession aan op de server (dit is een childclass van User)
             ActiveUsers.Add(userToAdd); // voegt de user toe aan de sessions op de server
                 // einde code dries
 
