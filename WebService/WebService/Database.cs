@@ -250,7 +250,32 @@ namespace WebService
 
 
 
+        public bool SelectedUsers(string fileid, List<Gebruiker> selectedUsers)
+        {
+            try
+            {
+                connection.Open();
+                cmd = connection.CreateCommand();
 
+                foreach (Gebruiker user in selectedUsers)
+                {
+                    cmd.CommandText = "INSERT INTO [dbo].[usersPerFile] VALUES (@fileid,@userid)";
+                    cmd.Parameters.AddWithValue("@userid", user);
+                    cmd.Parameters.AddWithValue("@fileid", fileid);
+                    cmd.ExecuteNonQuery();
+                }
+
+                return true;
+            }
+            catch (SqlException e)
+            {
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
 
     }
 }
