@@ -7,5 +7,9 @@ namespace WebService
 {
     public class Gebruiker
     {
+        [JsonProperty("id")]
+        public Guid id { get; set; }
+        [JsonProperty("name")]
+        public string name { get; set; }
     }
 }
