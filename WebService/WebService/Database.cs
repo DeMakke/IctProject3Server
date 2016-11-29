@@ -12,7 +12,7 @@ namespace WebService
     {
 
 
-        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionDries); // maak je eigen connectionstring en verander de naam
+        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionJan); // maak je eigen connectionstring en verander de naam
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
 
@@ -112,12 +112,12 @@ namespace WebService
                 cmd.Parameters.AddWithValue("@fileID", file.id);
                 int result = cmd.ExecuteNonQuery();
 
-                cmd2 = connection.CreateCommand();
+                /*cmd2 = connection.CreateCommand();
                 cmd2.CommandText = "DELETE FROM [dbo].[files] WHERE fileID = @fileID";
                 cmd2.Parameters.AddWithValue("@fileID", file.id);
 
-                int result2 = cmd2.ExecuteNonQuery();
-                if (result >= 1 && result2 >=1)
+                int result2 = cmd2.ExecuteNonQuery();*/
+                if (result >= 1)
                 {
                     return true;
                 }
@@ -255,19 +255,20 @@ namespace WebService
             cmd.CommandText = "SELECT UserID, UserName FROM Users";
             SqlDataReader reader;
             reader = cmd.ExecuteReader();
-            Gebruiker user = new Gebruiker();
-            List<Gebruiker> UserList = new List<Gebruiker>();
+            Gebruiker user;
+            List<Gebruiker> userList = new List<Gebruiker>();
 
             while (reader.Read())
             {
+                user = new Gebruiker();
                 user.id = reader.GetGuid(0);
                 user.name = reader.GetString(1);
-                UserList.Add(user);
+                userList.Add(user);
             }
             reader.Close();
             connection.Close();
 
-            return UserList;
+            return userList;
         }
 
         public bool SelectedUsers(string fileid, List<Gebruiker> selectedUsers)
@@ -280,7 +281,7 @@ namespace WebService
                 foreach (Gebruiker user in selectedUsers)
                 {
                     cmd.CommandText = "INSERT INTO [dbo].[usersPerFile] VALUES (@fileid,@userid)";
-                    cmd.Parameters.AddWithValue("@userid", user);
+                    cmd.Parameters.AddWithValue("@userid", user.id);
                     cmd.Parameters.AddWithValue("@fileid", fileid);
                     cmd.ExecuteNonQuery();
                 }

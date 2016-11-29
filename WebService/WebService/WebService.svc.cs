@@ -20,6 +20,7 @@ namespace WebService
         JsonCode json = new JsonCode();
         Database db = new Database();
         
+
         public void GetData()
         {
             Database databseInterface = new Database();
@@ -244,10 +245,6 @@ namespace WebService
             {
                 JsonCode json = new JsonCode();
                 Database db = new Database();
-                StreamReader reader = new StreamReader(Data);
-
-                string JSONData = reader.ReadToEnd();
-                Item file = json.Deserialize<Item>(JSONData);
 
                 List<Gebruiker> gebruikerlist = db.GetUsersData();
                 string reply = json.Serialize<List<Gebruiker>>(gebruikerlist);

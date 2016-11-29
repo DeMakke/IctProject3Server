@@ -76,7 +76,7 @@ namespace WebService
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.WrappedRequest,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
             UriTemplate = "Json/GetUsers/{token}")]
         string GetUsers(Stream Data, string token);//moet deze data meegeven?
 
@@ -84,7 +84,7 @@ namespace WebService
         [WebInvoke(Method = "POST",
            ResponseFormat = WebMessageFormat.Json,
            RequestFormat = WebMessageFormat.Json,
-           BodyStyle = WebMessageBodyStyle.WrappedRequest,
+           BodyStyle = WebMessageBodyStyle.Wrapped,
            UriTemplate = "Json/SetUsers/{id}/{token}")]
         string SetUsers(Stream Data, string id, string token);
 

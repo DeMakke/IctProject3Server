@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace WebService
 {
-
+    [DataContract]
     public class Gebruiker
     {
-         [JsonProperty("id")]
+         [DataMember]
+         
          public Guid id { get; set; }
 
-         [JsonProperty("name")]
+        [DataMember]
          public string name { get; set; }
     }
     
