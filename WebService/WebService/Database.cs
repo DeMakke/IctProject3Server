@@ -257,11 +257,14 @@ namespace WebService
             reader = cmd.ExecuteReader();
             Gebruiker user;
             List<Gebruiker> userList = new List<Gebruiker>();
+            Guid userid = new Guid();
+
 
             while (reader.Read())
             {
                 user = new Gebruiker();
-                user.id = reader.GetGuid(0);
+                userid = reader.GetGuid(0);
+                user.id = Convert.ToString(userid);
                 user.name = reader.GetString(1);
                 userList.Add(user);
             }

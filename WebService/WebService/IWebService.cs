@@ -85,8 +85,8 @@ namespace WebService
            ResponseFormat = WebMessageFormat.Json,
            RequestFormat = WebMessageFormat.Json,
            BodyStyle = WebMessageBodyStyle.Wrapped,
-           UriTemplate = "Json/SetUsers/{id}/{token}")]
-        string SetUsers(Stream Data, string id, string token);
+           UriTemplate = "Json/SetUsers/{fileid}/{token}")]
+        string SetUsers(Stream Data, string fileid, string token);
 
 
     }

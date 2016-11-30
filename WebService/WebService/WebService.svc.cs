@@ -260,7 +260,7 @@ namespace WebService
 
 
         //sprint4 story 7 bestanden delen
-        public string SetUsers(Stream Data, string id, string token)
+        public string SetUsers(Stream Data, string fileid, string token)
         {
             if (CheckUserStatus(token))
             {
@@ -271,10 +271,9 @@ namespace WebService
                 string JSONData = reader.ReadToEnd();
                 UserList userlist = new UserList();
                 userlist = json.JsonDeCodingUserList(JSONData);
-                succes.value = db.SelectedUsers(id, userlist.users);
+                succes.value = db.SelectedUsers(fileid, userlist.users);
                 return json.JsonCoding(succes);
             }
-
             else
             {
                 return "user is not logged in";

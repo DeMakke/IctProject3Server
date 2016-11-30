@@ -10,12 +10,11 @@ namespace WebService
     [DataContract]
     public class Gebruiker
     {
-         [DataMember]
-         
-         public Guid id { get; set; }
+        [DataMember]
+        public string id { get; set; }
 
         [DataMember]
-         public string name { get; set; }
+        public string name { get; set; }
     }
     
 }
