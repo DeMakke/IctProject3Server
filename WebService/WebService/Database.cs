@@ -259,7 +259,6 @@ namespace WebService
             List<Gebruiker> userList = new List<Gebruiker>();
             Guid userid = new Guid();
 
-
             while (reader.Read())
             {
                 user = new Gebruiker();

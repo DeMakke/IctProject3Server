@@ -269,9 +269,8 @@ namespace WebService
                 Succes succes = new Succes();
                 StreamReader reader = new StreamReader(Data);
                 string JSONData = reader.ReadToEnd();
-                UserList userlist = new UserList();
-                userlist = json.JsonDeCodingUserList(JSONData);
-                succes.value = db.SelectedUsers(fileid, userlist.users);
+                List<Gebruiker> userlist = json.Deserialize<List<Gebruiker>>(JSONData);
+                succes.value = db.SelectedUsers(fileid, userlist);
                 return json.JsonCoding(succes);
             }
             else
