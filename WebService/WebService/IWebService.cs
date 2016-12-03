@@ -88,6 +88,14 @@ namespace WebService
            UriTemplate = "Json/SetUsers/{fileid}/{token}")]
         string SetUsers(Stream Data, string fileid, string token);
 
+        [OperationContract]//sprint 4 story 6 publiek delen
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "Json/PublicShare")]
+        string PublicShare(Stream Data);
+
 
     }
 }

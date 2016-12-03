@@ -300,5 +300,30 @@ namespace WebService
             }
         }
 
+        public bool ShareWithAll(string itemId)
+        {
+            try
+            {
+                bool shareBool = true;
+                connection.Open();
+                cmd = connection.CreateCommand();
+                cmd.CommandText = "INSERT INTO [dbo].[fileTable]([shareBoolean]) VALUES (@shareBool) WHERE fileID = '@fileID'";
+                cmd.Parameters.AddWithValue("@shareBool", shareBool);
+                cmd.Parameters.AddWithValue("@fileID", itemId);
+
+                cmd.ExecuteNonQuery();
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
     }
 }
