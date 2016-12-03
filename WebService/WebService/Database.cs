@@ -286,6 +286,7 @@ namespace WebService
                     cmd.Parameters.AddWithValue("@userid", user.id);
                     cmd.Parameters.AddWithValue("@fileid", fileid);
                     cmd.ExecuteNonQuery();
+                    cmd.Parameters.Clear();
                 }
 
                 return true;
