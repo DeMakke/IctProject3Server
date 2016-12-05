@@ -131,17 +131,17 @@ namespace WebService
 
         }
 
-        public bool AddRecord(Data fileData)
+        public bool AddRecord(Data fileData, string UserID)
         {
             try
             {
                 connection.Open();
                 cmd = connection.CreateCommand();
-                cmd.CommandText = "INSERT INTO [dbo].[fileTable] ([fileName],[filePath]) OUTPUT inserted.fileID VALUES (@filename, @filepath)";
+                cmd.CommandText = "INSERT INTO [dbo].[fileTable] ([fileName],[filePath],[UserID]) OUTPUT inserted.fileID VALUES (@filename, @filepath, @userID)";
 
                 cmd.Parameters.AddWithValue("@filename", fileData.name);
                 cmd.Parameters.AddWithValue("@filepath", fileData.path);
-
+                cmd.Parameters.AddWithValue("@userID", UserID);
 
                 Guid uniqueid = (Guid)cmd.ExecuteScalar();
 

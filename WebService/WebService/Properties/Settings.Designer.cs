@@ -26,7 +26,7 @@ namespace WebService.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=DRIES\\SQLSERVER;Initial Catalog=fileshare;Integrated Security=True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=MSI\\SQLEXPRESS;Initial Catalog=fileshare;Integrated Security=True")]
         public string DBconnectionDries {
             get {
                 return ((string)(this["DBconnectionDries"]));

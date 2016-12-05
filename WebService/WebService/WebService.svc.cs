@@ -100,8 +100,9 @@ namespace WebService
                         inp[Convert.ToInt16(id)].FileData.path = base64.saveFile(filebytes.Item1, inp[Convert.ToInt16(id)].FileData.name);
 
                         Database database = new Database();
+                        Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
 
-                        bool status = database.AddRecord(inp[Convert.ToInt16(id)].FileData);
+                        bool status = database.AddRecord(inp[Convert.ToInt16(id)].FileData, session.id);
                         Debug.WriteLine(status);
                         JSONData = "OK" + inp[Convert.ToInt16(id)].base64stringpackets.Count;
                 
