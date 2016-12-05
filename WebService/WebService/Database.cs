@@ -236,11 +236,12 @@ namespace WebService
             if (checkPassword)
             {
                 user.token = random.Next(1, 8999);
+                user.id = UserId;
             }
             else
             {
                 user.token = 9999;
-                user.id = UserId;
+                
             }
 
             return user;
