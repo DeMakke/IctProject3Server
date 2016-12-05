@@ -185,8 +185,8 @@ namespace WebService
 
                 Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
 
-                //List<Item> itemlist = database.GetData(session.id);
-                List<Item> itemlist = database.GetItems();
+                List<Item> itemlist = database.GetData(session.id);
+                //List<Item> itemlist = database.GetItems();
                 //Debug.WriteLine("test");
                 string reply = json.Serialize<List<Item>>(itemlist);
 

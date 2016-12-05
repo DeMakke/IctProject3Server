@@ -57,7 +57,7 @@ namespace WebService
             connection.Open();
 
             cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT fileshare.dbo.fileTable.fileID, fileshare.dbo.fileTable.fileName FROM fileTable INNER JOIN fileshare.dbo.usersPerFile ON fileshare.dbo.fileTable.fileID = fileshare.dbo.usersPerFile.fileID WHERE fileshare.dbo.fileTable.UserID = '"+Userid+"' OR fileshare.dbo.usersPerFile.userID = '"+Userid+"';";
+            cmd.CommandText = "SELECT fileTable.fileId, fileTable.fileName FROM files INNER JOIN fileTable ON files.fileID = fileTable.fileID INNER JOIN usersPerFile ON files.fileID = usersPerFile.fileID WHERE(usersPerFile.UserID = '"+Userid+"');";
 
             //selecteer de eigen bestanden
             //"SELECT [fileID],[fileName]" +
@@ -152,6 +152,10 @@ namespace WebService
                 
                 //cmd2.Parameters.AddWithValue("@filepath", fileData.path);
 
+                cmd2.ExecuteNonQuery();
+
+                cmd2 = connection.CreateCommand();
+                cmd2.CommandText = "INSERT INTO[dbo].[usersPerFile]([fileID], [userID]) VALUES('" + Convert.ToString(uniqueid) + "', '" + UserID + "')";
                 cmd2.ExecuteNonQuery();
 
                 return true;
