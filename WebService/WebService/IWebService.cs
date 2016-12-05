@@ -72,6 +72,30 @@ namespace WebService
             UriTemplate = "Json/ValidateUser/{token}")]
         string ValidateUser(Stream Data,string token);
 
+        [OperationContract]//sprint 4 story 7 gebruikers afhalen
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "Json/GetUsers/{token}")]
+        string GetUsers(Stream Data, string token);//moet deze data meegeven?
+
+        [OperationContract]//sprint 4 story 7 bestanden delen
+        [WebInvoke(Method = "POST",
+           ResponseFormat = WebMessageFormat.Json,
+           RequestFormat = WebMessageFormat.Json,
+           BodyStyle = WebMessageBodyStyle.Wrapped,
+           UriTemplate = "Json/SetUsers/{fileid}/{token}")]
+        string SetUsers(Stream Data, string fileid, string token);
+
+        [OperationContract]//sprint 4 story 6 publiek delen
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "Json/PublicShare")]
+        string PublicShare(Stream Data);
+
 
     }
 }

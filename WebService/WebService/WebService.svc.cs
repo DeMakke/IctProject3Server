@@ -20,6 +20,7 @@ namespace WebService
         JsonCode json = new JsonCode();
         Database db = new Database();
         
+
         public void GetData()
         {
             Database databseInterface = new Database();
@@ -240,10 +241,61 @@ namespace WebService
             {
                 return false;
             }
-            
-            
+             
+        }
+
+        public string GetUsers(Stream Data, string token)
+        {
+            if (CheckUserStatus(token))
+            {
+                JsonCode json = new JsonCode();
+                Database db = new Database();
+
+                List<Gebruiker> gebruikerlist = db.GetUsersData();
+                string reply = json.Serialize<List<Gebruiker>>(gebruikerlist);
+
+                return reply;
+            }
+            else
+            {
+                return "user is not logged in";
+            }
 
         }
 
-}
+
+        //sprint4 story 7 bestanden delen
+        public string SetUsers(Stream Data, string fileid, string token)
+        {
+            if (CheckUserStatus(token))
+            {
+                JsonCode json = new JsonCode();
+                Database db = new Database();
+                Succes succes = new Succes();
+                StreamReader reader = new StreamReader(Data);
+                string JSONData = reader.ReadToEnd();
+                List<Gebruiker> userlist = json.Deserialize<List<Gebruiker>>(JSONData);
+                succes.value = db.SelectedUsers(fileid, userlist);
+                return json.JsonCoding(succes);
+            }
+            else
+            {
+                return "user is not logged in";
+            }
+        }
+
+        //sprint 4 story 6 publiek delen
+        public string PublicShare(Stream Data)
+        {
+            Database database = new Database();
+            JsonCode json = new JsonCode();
+            Succes succes = new Succes();
+            StreamReader reader = new StreamReader(Data);
+
+            string itemId = reader.ReadToEnd();
+            succes.value = database.ShareWithAll(itemId);
+            return json.JsonCoding(succes);
+        }
+
+    }
 }

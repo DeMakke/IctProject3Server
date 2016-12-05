@@ -251,9 +251,83 @@ namespace WebService
             return user;
         }
 
+        public List<Gebruiker> GetUsersData()//functie haalt gevens van alle gebruikers op
+        {
+            connection.Open();
+            cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT UserID, UserName FROM Users";
+            SqlDataReader reader;
+            reader = cmd.ExecuteReader();
+            Gebruiker user;
+            List<Gebruiker> userList = new List<Gebruiker>();
+            Guid userid = new Guid();
 
+            while (reader.Read())
+            {
+                user = new Gebruiker();
+                userid = reader.GetGuid(0);
+                user.id = Convert.ToString(userid);
+                user.name = reader.GetString(1);
+                userList.Add(user);
+            }
+            reader.Close();
+            connection.Close();
 
+            return userList;
+        }
 
+        public bool SelectedUsers(string fileid, List<Gebruiker> selectedUsers)
+        {
+            try
+            {
+                connection.Open();
+                cmd = connection.CreateCommand();
+
+                foreach (Gebruiker user in selectedUsers)
+                {
+                    cmd.CommandText = "INSERT INTO [dbo].[usersPerFile] VALUES (@fileid,@userid)";
+                    cmd.Parameters.AddWithValue("@userid", user.id);
+                    cmd.Parameters.AddWithValue("@fileid", fileid);
+                    cmd.ExecuteNonQuery();
+                    cmd.Parameters.Clear();
+                }
+
+                return true;
+            }
+            catch (SqlException e)
+            {
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        public bool ShareWithAll(string itemId)
+        {
+            try
+            {
+                bool shareBool = true;
+                connection.Open();
+                cmd = connection.CreateCommand();
+                cmd.CommandText = "INSERT INTO [dbo].[fileTable]([shareBoolean]) VALUES (@shareBool) WHERE fileID = '@fileID'";
+                cmd.Parameters.AddWithValue("@shareBool", shareBool);
+                cmd.Parameters.AddWithValue("@fileID", itemId);
+
+                cmd.ExecuteNonQuery();
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
 
     }
 }

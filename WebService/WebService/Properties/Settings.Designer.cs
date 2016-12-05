@@ -43,5 +43,15 @@ namespace WebService.Properties {
                 return ((string)(this["DBconnectionFrederik"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=JANLAPTOP;Initial Catalog=fileshare;Integrated Security=True")]
+        public string DBconnectionJan {
+            get {
+                return ((string)(this["DBconnectionJan"]));
+            }
+        }
     }
 }
