@@ -300,7 +300,6 @@ namespace WebService
             {
                 return "user is not logged in";
             }
-
         }
 
         public string Logout(Stream Data, string token)
