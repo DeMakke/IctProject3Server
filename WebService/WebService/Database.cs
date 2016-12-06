@@ -10,7 +10,7 @@ namespace WebService
 {
     public class Database
     {
-        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionDries); // maak je eigen connectionstring en verander de naam
+        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionMaxim); // maak je eigen connectionstring en verander de naam
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
 
@@ -304,23 +304,25 @@ namespace WebService
             }
         }
 
-        public bool ShareWithAll(string itemId)
+        public bool ShareWithAll(string fileid)
         {
             try
             {
-                bool shareBool = true;
+                int shareBool = 1;
+                Guid ID = Guid.Parse(fileid);
                 connection.Open();
                 cmd = connection.CreateCommand();
-                cmd.CommandText = "INSERT INTO [dbo].[fileTable]([shareBoolean]) VALUES (@shareBool) WHERE fileID = '@fileID'";
+                cmd.CommandText = "UPDATE [dbo].[files] set publiek=@shareBool WHERE fileID =@fileID";
                 cmd.Parameters.AddWithValue("@shareBool", shareBool);
-                cmd.Parameters.AddWithValue("@fileID", itemId);
+                cmd.Parameters.AddWithValue("@fileID", ID);
 
                 cmd.ExecuteNonQuery();
                 return true;
 
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
+                Debug.WriteLine(ex.Message);
                 return false;
             }
             finally

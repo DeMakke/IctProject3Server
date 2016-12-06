@@ -285,16 +285,22 @@ namespace WebService
         }
 
         //sprint 4 story 6 publiek delen
-        public string PublicShare(Stream Data)
+        public string PublicShare(Stream Data, string fileid, string token)
         {
-            Database database = new Database();
-            JsonCode json = new JsonCode();
-            Succes succes = new Succes();
-            StreamReader reader = new StreamReader(Data);
+            if (CheckUserStatus(token))
+            {
+                Database database = new Database();
+                JsonCode json = new JsonCode();
+                Succes succes = new Succes();
+                StreamReader reader = new StreamReader(Data);
+                succes.value = database.ShareWithAll(fileid);
+                return json.JsonCoding(succes);
+            }
+            else
+            {
+                return "user is not logged in";
+            }
 
-            string itemId = reader.ReadToEnd();
-            succes.value = database.ShareWithAll(itemId);
-            return json.JsonCoding(succes);
         }
 
         public string Logout(Stream Data, string token)

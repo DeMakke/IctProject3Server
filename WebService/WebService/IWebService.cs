@@ -101,8 +101,8 @@ namespace WebService
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped,
-            UriTemplate = "Json/PublicShare")]
-        string PublicShare(Stream Data);
+            UriTemplate = "Json/PublicShare/{fileid}/{token}")]
+        string PublicShare(Stream Data, string fileid, string token);
 
 
     }
