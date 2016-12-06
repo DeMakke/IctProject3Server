@@ -104,6 +104,12 @@ namespace WebService
             UriTemplate = "Json/PublicShare/{fileid}/{token}")]
         string PublicShare(Stream Data, string fileid, string token);
 
-
+        [OperationContract]//sprint 5 story 12 gebruiker gegevens wijzigen
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "Json/ChangeUserData/{token}")]
+        string ChangeUserData(Stream Data, string token);
     }
 }

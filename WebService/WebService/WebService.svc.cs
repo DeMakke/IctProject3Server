@@ -314,5 +314,28 @@ namespace WebService
             string result = json.JsonCoding(user);
             return result;
         }
+
+        //print 5 story 12
+        public string ChangeUserData(Stream Data, string token)
+        {
+            if (CheckUserStatus(token))
+            {
+                JsonCode json = new JsonCode();
+                Database db = new Database();
+                Succes succes = new Succes();
+                StreamReader reader = new StreamReader(Data);
+                Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
+
+                string JSONData = reader.ReadToEnd();
+                Gebruiker gebruiker = json.Deserialize<Gebruiker>(JSONData);
+                gebruiker.id = session.id;
+                succes.value = db.ChangeUserData(gebruiker);
+                return json.JsonCoding(succes);
+            }
+            else
+            {
+                return "user is not logged in";
+            }
+        }
     }
 }
