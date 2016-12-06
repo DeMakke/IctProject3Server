@@ -297,5 +297,16 @@ namespace WebService
             return json.JsonCoding(succes);
         }
 
+        public string Logout(Stream Data, string token)
+        {
+            Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
+            ActiveUsers.Remove(session);
+
+            User user = new User();
+            user.token = 8500;
+            user.name = "guest";
+            string result = json.JsonCoding(user);
+            return result;
+        }
     }
 }

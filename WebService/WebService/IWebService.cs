@@ -72,6 +72,14 @@ namespace WebService
             UriTemplate = "Json/ValidateUser/{token}")]
         string ValidateUser(Stream Data,string token);
 
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+        ResponseFormat = WebMessageFormat.Json,
+        RequestFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.WrappedRequest,
+        UriTemplate = "Json/Logout/{token}")]
+        string Logout(Stream Data, string token);
+
         [OperationContract]//sprint 4 story 7 gebruikers afhalen
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
