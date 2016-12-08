@@ -15,6 +15,9 @@ namespace WebService
 
         [DataMember]
         public string name { get; set; }
+
+        [DataMember]
+        public string password { get; set; }
     }
     
 }

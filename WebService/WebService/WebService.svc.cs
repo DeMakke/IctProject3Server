@@ -330,7 +330,7 @@ namespace WebService
                 Gebruiker gebruiker = json.Deserialize<Gebruiker>(JSONData);
                 gebruiker.id = session.id;
                 succes.value = db.ChangeUserData(gebruiker);
-                return json.JsonCoding(succes);
+                return json.Serialize<Succes>(succes);
             }
             else
             {

@@ -335,17 +335,51 @@ namespace WebService
         {
             try
             {
-                connection.Open();
-                cmd = connection.CreateCommand();
+                if(gebruiker.name != "" && gebruiker.password != "")
+                {
+                    connection.Open();
+                    cmd = connection.CreateCommand();
 
-                
-                cmd.CommandText = "UPDATE Users SET UserName=@username WHERE UserID=@userid";
-                cmd.Parameters.AddWithValue("@userid", gebruiker.id);
-                cmd.Parameters.AddWithValue("@username", gebruiker.name);
-                cmd.ExecuteNonQuery();
-                cmd.Parameters.Clear();
-                
-                return true;
+
+                    cmd.CommandText = "UPDATE Users SET UserName=@username, Password=@password WHERE UserID=@userid";
+                    cmd.Parameters.AddWithValue("@userid", gebruiker.id);
+                    cmd.Parameters.AddWithValue("@username", gebruiker.name);
+                    cmd.Parameters.AddWithValue("@password", gebruiker.password);
+                    cmd.ExecuteNonQuery();
+                    cmd.Parameters.Clear();
+
+                    return true;
+                }
+                else if(gebruiker.name != "" && gebruiker.password == "")
+                {
+                    connection.Open();
+                    cmd = connection.CreateCommand();
+
+
+                    cmd.CommandText = "UPDATE Users SET UserName=@username WHERE UserID=@userid";
+                    cmd.Parameters.AddWithValue("@userid", gebruiker.id);
+                    cmd.Parameters.AddWithValue("@username", gebruiker.name);
+                    cmd.ExecuteNonQuery();
+                    cmd.Parameters.Clear();
+
+                    return true;
+                }
+                else if (gebruiker.name == "" && gebruiker.password != "")
+                {
+                    connection.Open();
+                    cmd = connection.CreateCommand();
+
+
+                    cmd.CommandText = "UPDATE Users SET Password=@password WHERE UserID=@userid";
+                    cmd.Parameters.AddWithValue("@userid", gebruiker.id);
+                    cmd.Parameters.AddWithValue("@password", gebruiker.password);
+                    cmd.ExecuteNonQuery();
+                    cmd.Parameters.Clear();
+
+                    return true;
+                }
+                return false;
+
             }
             catch (SqlException e)
             {
