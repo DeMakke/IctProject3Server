@@ -320,8 +320,8 @@ namespace WebService
         {
             if (CheckUserStatus(token))
             {
-                JsonCode json = new JsonCode();
-                Database db = new Database();
+                json = new JsonCode();
+                db = new Database();
                 Succes succes = new Succes();
                 StreamReader reader = new StreamReader(Data);
                 Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
