@@ -92,7 +92,7 @@ namespace WebService
         [WebInvoke(Method = "POST",
            ResponseFormat = WebMessageFormat.Json,
            RequestFormat = WebMessageFormat.Json,
-           BodyStyle = WebMessageBodyStyle.Wrapped,
+           BodyStyle = WebMessageBodyStyle.WrappedRequest,
            UriTemplate = "Json/SetUsers/{fileid}/{token}")]
         string SetUsers(Stream Data, string fileid, string token);
 
@@ -108,7 +108,7 @@ namespace WebService
         [WebInvoke(Method = "POST",
             ResponseFormat = WebMessageFormat.Json,
             RequestFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Wrapped,
+            BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "Json/ChangeUserData/{token}")]
         string ChangeUserData(Stream Data, string token);
     }
