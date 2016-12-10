@@ -327,9 +327,10 @@ namespace WebService
                 Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
 
                 string JSONData = reader.ReadToEnd();
-                Gebruiker gebruiker = json.Deserialize<Gebruiker>(JSONData);
-                gebruiker.id = session.id;
-                succes.value = db.ChangeUserData(gebruiker);
+                User user = json.Deserialize<User>(JSONData);
+                user.id = session.id;
+                
+                succes.value = db.ChangeUserData(user);
                 return json.JsonCoding(succes);
             }
             else

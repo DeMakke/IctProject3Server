@@ -331,10 +331,10 @@ namespace WebService
             }
         }
 
-        public bool ChangeUserData(Gebruiker gebruiker)
+        public bool ChangeUserData(User gebruiker)
         {
             try
-            {
+            {                
                 connection.Open();
                 cmd = connection.CreateCommand();
                 if (gebruiker.name != "" && gebruiker.password != "")//beide
