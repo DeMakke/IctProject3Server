@@ -251,20 +251,20 @@ namespace WebService
             return user;
         }
 
-        public List<Gebruiker> GetUsersData()//functie haalt gevens van alle gebruikers op
+        public List<User> GetUsersData()//functie haalt gevens van alle gebruikers op
         {
             connection.Open();
             cmd = connection.CreateCommand();
             cmd.CommandText = "SELECT UserID, UserName FROM Users";
             SqlDataReader reader;
             reader = cmd.ExecuteReader();
-            Gebruiker user;
-            List<Gebruiker> userList = new List<Gebruiker>();
+            User user;
+            List<User> userList = new List<User>();
             Guid userid = new Guid();
 
             while (reader.Read())
             {
-                user = new Gebruiker();
+                user = new User();
                 userid = reader.GetGuid(0);
                 user.id = Convert.ToString(userid);
                 user.name = reader.GetString(1);
@@ -276,14 +276,14 @@ namespace WebService
             return userList;
         }
 
-        public bool SelectedUsers(string fileid, List<Gebruiker> selectedUsers)
+        public bool SelectedUsers(string fileid, List<User> selectedUsers)
         {
             try
             {
                 connection.Open();
                 cmd = connection.CreateCommand();
 
-                foreach (Gebruiker user in selectedUsers)
+                foreach (User user in selectedUsers)
                 {
                     cmd.CommandText = "INSERT INTO [dbo].[usersPerFile] VALUES (@fileid,@userid)";
                     cmd.Parameters.AddWithValue("@userid", user.id);

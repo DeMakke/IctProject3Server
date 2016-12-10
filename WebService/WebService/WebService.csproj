@@ -105,7 +105,6 @@
     <Compile Include="Data.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="FileList.cs" />
-    <Compile Include="Gebruiker.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="IWebService.cs" />
     <Compile Include="JsonCode.cs" />

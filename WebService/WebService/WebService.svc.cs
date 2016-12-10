@@ -251,8 +251,8 @@ namespace WebService
                 JsonCode json = new JsonCode();
                 Database db = new Database();
 
-                List<Gebruiker> gebruikerlist = db.GetUsersData();
-                string reply = json.Serialize<List<Gebruiker>>(gebruikerlist);
+                List<User> gebruikerlist = db.GetUsersData();
+                string reply = json.Serialize<List<User>>(gebruikerlist);
 
                 return reply;
             }
@@ -274,7 +274,7 @@ namespace WebService
                 Succes succes = new Succes();
                 StreamReader reader = new StreamReader(Data);
                 string JSONData = reader.ReadToEnd();
-                List<Gebruiker> userlist = json.Deserialize<List<Gebruiker>>(JSONData);
+                List<User> userlist = json.Deserialize<List<User>>(JSONData);
                 succes.value = db.SelectedUsers(fileid, userlist);
                 return json.JsonCoding(succes);
             }
