@@ -54,12 +54,6 @@ namespace WebService
             return user;
         }
 
-        public Gebruiker JsonDeCodingGebruiker(String json)
-        {
-            Gebruiker gebruiker = JsonConvert.DeserializeObject<Gebruiker>(json);
-            return gebruiker;
-        }
-
         public String JsonCoding(User user)
         {
             string json = JsonConvert.SerializeObject(user);
