@@ -330,6 +330,132 @@ namespace WebService
                 connection.Close();
             }
         }
+        public bool AddUser(string id, string name, string password)
+        {
+            try
+            {               
+                Guid ID = Guid.Parse(id);
+                connection.Open();
+                cmd = connection.CreateCommand();
+                cmd.CommandText = "INSERT INTO Users (UserID, UserName, Password) VALUES(@UserID,@UserName,@Password)";
+                cmd.Parameters.AddWithValue("@UserID", ID );
+                cmd.Parameters.AddWithValue("@UserName", name);
+                cmd.Parameters.AddWithValue("@Password", password);
+
+                cmd.ExecuteNonQuery();
+                return true;
+
+            }
+            catch (SqlException ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        public bool DeleteUser(string id)
+        {
+            try
+            {
+                Guid ID = Guid.Parse(id);
+                connection.Open();
+                cmd = connection.CreateCommand();
+                cmd.CommandText = "DELETE FROM [dbo].[Users] WHERE UserID=@UserId";
+                cmd.Parameters.AddWithValue("@UserID", ID);
+
+                cmd.ExecuteNonQuery();
+                return true;
+
+            }
+            catch (SqlException ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        public bool UpdateUser(string userId, string name, string password)
+        {
+            try
+            {
+                Guid ID = Guid.Parse(userId);
+                connection.Open();
+                cmd = connection.CreateCommand();
+                cmd.CommandText = "UPDATE Users set UserName=@UserName,Password=@Password WHERE UserID=@UserID";
+                cmd.Parameters.AddWithValue("@UserID", ID);
+                cmd.Parameters.AddWithValue("@UserName", name);
+                cmd.Parameters.AddWithValue("@Password", password);
+
+                cmd.ExecuteNonQuery();
+                return true;
+
+            }
+            catch (SqlException ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+
+        public bool ChangeUserData(User gebruiker)
+        {
+            try
+            {                
+                connection.Open();
+                cmd = connection.CreateCommand();
+                if (gebruiker.name != "" && gebruiker.password != "")//beide
+                {
+                    cmd.CommandText = "UPDATE Users SET UserName=@username, Password=@password WHERE UserID=@userid";
+                    cmd.Parameters.AddWithValue("@userid", gebruiker.id);
+                    cmd.Parameters.AddWithValue("@username", gebruiker.name);
+                    cmd.Parameters.AddWithValue("@password", gebruiker.password);
+                    cmd.ExecuteNonQuery();
+                    cmd.Parameters.Clear();
+                    return true;
+                }
+                else if(gebruiker.name != "" && gebruiker.password == "")//naam
+                {
+                    cmd.CommandText = "UPDATE Users SET UserName=@username WHERE UserID=@userid";
+                    cmd.Parameters.AddWithValue("@userid", gebruiker.id);
+                    cmd.Parameters.AddWithValue("@username", gebruiker.name);
+                    cmd.ExecuteNonQuery();
+                    cmd.Parameters.Clear();
+                    return true;
+                }
+                else if (gebruiker.name == "" && gebruiker.password != "")//ww
+                {
+                    cmd.CommandText = "UPDATE Users SET Password=@password WHERE UserID=@userid";
+                    cmd.Parameters.AddWithValue("@userid", gebruiker.id);
+                    cmd.Parameters.AddWithValue("@password", gebruiker.password);
+                    cmd.ExecuteNonQuery();
+                    cmd.Parameters.Clear();
+                    return true;
+                }
+                return false;
+
+            }
+            catch (SqlException e)
+            {
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
 
     }
 }

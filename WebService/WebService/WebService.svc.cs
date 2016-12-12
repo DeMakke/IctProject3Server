@@ -300,6 +300,77 @@ namespace WebService
             {
                 return "user is not logged in";
             }
+
+        }
+
+        public string AddUser(Stream Data, string token)
+        {
+            if (CheckUserStatus(token))
+            {
+                Database database = new Database();
+                JsonCode json = new JsonCode();
+                Succes succes = new Succes();
+
+                StreamReader reader = new StreamReader(Data);
+                string JSONData = reader.ReadToEnd();
+                User user = json.JsonDeCodingUser(JSONData);
+
+                string id = user.id;
+                string name = user.name;
+                string password = user.password;
+                succes.value = database.AddUser(id,name,password);
+                return json.JsonCoding(succes);
+            }
+            else
+            {
+                return "user is not logged in";
+            }
+        }
+
+        public string DeleteUser(Stream Data, string token)
+        {
+            if (CheckUserStatus(token))
+            {
+                Database database = new Database();
+                JsonCode json = new JsonCode();
+                Succes succes = new Succes();
+
+                StreamReader reader = new StreamReader(Data);
+                string JSONData = reader.ReadToEnd();
+                User user = json.JsonDeCodingUser(JSONData);
+
+                string id = user.id;
+                succes.value = database.DeleteUser(id);
+                return json.JsonCoding(succes);
+            }
+            else
+            {
+                return "user is not logged in";
+            }
+        }
+
+        public string UpdateUser(Stream Data, string token)
+        {
+            if (CheckUserStatus(token))
+            {
+                Database database = new Database();
+                JsonCode json = new JsonCode();
+                Succes succes = new Succes();
+
+                StreamReader reader = new StreamReader(Data);
+                string JSONData = reader.ReadToEnd();
+                User user = json.JsonDeCodingUser(JSONData);
+
+                string id = user.id;
+                string name = user.name;
+                string password = user.password;
+                succes.value = database.UpdateUser(id, name, password);
+                return json.JsonCoding(succes);
+            }
+            else
+            {
+                return "user is not logged in";
+            }
         }
 
         public string Logout(Stream Data, string token)
@@ -312,6 +383,30 @@ namespace WebService
             user.name = "guest";
             string result = json.JsonCoding(user);
             return result;
+        }
+
+        //print 5 story 12
+        public string ChangeUserData(Stream Data, string token)
+        {
+            if (CheckUserStatus(token))
+            {
+                json = new JsonCode();
+                db = new Database();
+                Succes succes = new Succes();
+                StreamReader reader = new StreamReader(Data);
+                Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
+
+                string JSONData = reader.ReadToEnd();
+                User user = json.Deserialize<User>(JSONData);
+                user.id = session.id;
+                
+                succes.value = db.ChangeUserData(user);
+                return json.JsonCoding(succes);
+            }
+            else
+            {
+                return "user is not logged in";
+            }
         }
     }
 }
