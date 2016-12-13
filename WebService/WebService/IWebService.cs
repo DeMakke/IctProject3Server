@@ -111,5 +111,29 @@ namespace WebService
             BodyStyle = WebMessageBodyStyle.WrappedRequest,
             UriTemplate = "Json/ChangeUserData/{token}")]
         string ChangeUserData(Stream Data, string token);
+
+        [OperationContract]//AddUser
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "Json/AddUser/{token}")]
+        string AddUser(Stream Data, /*string id,string name, string password,*/ string token);
+
+        [OperationContract]//DeleteUser
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "Json/DeleteUser/{token}")]
+        string DeleteUser(Stream Data, string token);
+
+        [OperationContract]//UpdateUser
+        [WebInvoke(Method = "POST",
+            ResponseFormat = WebMessageFormat.Json,
+            RequestFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped,
+            UriTemplate = "Json/UpdateUser/{token}")]
+        string UpdateUser(Stream Data, string token);
     }
 }

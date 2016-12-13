@@ -10,7 +10,7 @@ namespace WebService
 {
     public class Database
     {
-        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionJan); // maak je eigen connectionstring en verander de naam
+        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionMaxim); // maak je eigen connectionstring en verander de naam
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
 
@@ -315,6 +315,85 @@ namespace WebService
                 cmd.CommandText = "UPDATE [dbo].[files] set publiek=@shareBool WHERE fileID =@fileID";
                 cmd.Parameters.AddWithValue("@shareBool", shareBool);
                 cmd.Parameters.AddWithValue("@fileID", ID);
+
+                cmd.ExecuteNonQuery();
+                return true;
+
+            }
+            catch (SqlException ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        public bool AddUser(string id, string name, string password)
+        {
+            try
+            {
+                Guid ID = Guid.Parse(id);
+                connection.Open();
+                cmd = connection.CreateCommand();
+                cmd.CommandText = "INSERT INTO Users (UserID, UserName, Password) VALUES(@UserID,@UserName,@Password)";
+                cmd.Parameters.AddWithValue("@UserID", ID);
+                cmd.Parameters.AddWithValue("@UserName", name);
+                cmd.Parameters.AddWithValue("@Password", password);
+
+                cmd.ExecuteNonQuery();
+                return true;
+
+            }
+            catch (SqlException ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        public bool DeleteUser(string id)
+        {
+            try
+            {
+                Guid ID = Guid.Parse(id);
+                connection.Open();
+                cmd = connection.CreateCommand();
+                cmd.CommandText = "DELETE FROM [dbo].[Users] WHERE UserID=@UserId";
+                cmd.Parameters.AddWithValue("@UserID", ID);
+
+                cmd.ExecuteNonQuery();
+                return true;
+
+            }
+            catch (SqlException ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return false;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        public bool UpdateUser(string userId, string name, string password)
+        {
+            try
+            {
+                Guid ID = Guid.Parse(userId);
+                connection.Open();
+                cmd = connection.CreateCommand();
+                cmd.CommandText = "UPDATE Users set UserName=@UserName,Password=@Password WHERE UserID=@UserID";
+                cmd.Parameters.AddWithValue("@UserID", ID);
+                cmd.Parameters.AddWithValue("@UserName", name);
+                cmd.Parameters.AddWithValue("@Password", password);
 
                 cmd.ExecuteNonQuery();
                 return true;
