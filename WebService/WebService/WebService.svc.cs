@@ -40,13 +40,26 @@ namespace WebService
         {
             if (CheckUserStatus(token))
             {
-                    string Json;
-                    Data data = new Data();
-                    JsonCode json = new JsonCode();
-                    data.base64 = "amEgbmVlIGlrIGdhIG1pam4gcGFzIG5pZSBkb29yc3R1cmVu";
-                    data.name = "tsserver.txt";
-                    Json = json.JsonCoding(data);
-                    return Json;
+                StreamReader reader = new StreamReader(Data);
+                string JSONData = reader.ReadToEnd();
+
+                BinaryFile binaryfile = new BinaryFile();
+                Database database = new Database();
+                Base64Code base64 = new Base64Code();
+                Data data = new Data();
+                JsonCode json = new JsonCode();
+                //data.base64 = "amEgbmVlIGlrIGdhIG1pam4gcGFzIG5pZSBkb29yc3R1cmVu";
+                //data.name = "tsserver.txt";
+
+                string fileid = JSONData.Replace("\\\"", "\"");
+
+                binaryfile = database.getSelectedItem(new Guid(fileid));
+                data.base64 = base64.SerializeBase64(binaryfile.binary);
+                data.name = binaryfile.name;
+
+                string JsonToSend = json.JsonCoding(data);
+
+                return JsonToSend;
             }
             else
             {
@@ -88,30 +101,30 @@ namespace WebService
 
                     inp[inp.FindIndex(x => x.id == Convert.ToInt16(id))].base64stringpackets.Add(JSONData);
 
-                    if (current == max)
+                if (current == max)
+                {
+
+                    inp[Convert.ToInt16(id)].FileData.base64 = "";
+
+                    foreach (string item in inp[Convert.ToInt16(id)].base64stringpackets)
                     {
-
-                        inp[Convert.ToInt16(id)].FileData.base64 = "";
-
-                        foreach (string item in inp[Convert.ToInt16(id)].base64stringpackets)
-                        {
-                            inp[Convert.ToInt16(id)].FileData.base64 += item;
-                        }
-                        Tuple<byte[],string> filebytes = base64.DeSerializeBase64(inp[Convert.ToInt16(id)].FileData);
-                        inp[Convert.ToInt16(id)].FileData.path = base64.saveFile(filebytes.Item1, inp[Convert.ToInt16(id)].FileData.name);
-
-                        Database database = new Database();
-                        Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
-
-                        bool status = database.AddRecord(inp[Convert.ToInt16(id)].FileData, session.id);
-                        Debug.WriteLine(status);
-                        JSONData = "OK" + inp[Convert.ToInt16(id)].base64stringpackets.Count;
-                
-                        inp.RemoveAll(x => x.id == Convert.ToInt16(id));
-                
+                        inp[Convert.ToInt16(id)].FileData.base64 += item;
                     }
-            
-                    return JSONData;
+                    Tuple<byte[], string> filebytes = base64.DeSerializeBase64(inp[Convert.ToInt16(id)].FileData);
+                    //inp[Convert.ToInt16(id)].FileData.path = base64.saveFile(filebytes.Item1, inp[Convert.ToInt16(id)].FileData.name); // this line saves the fiile on the server itself
+
+                    Database database = new Database();
+                    Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
+
+                    bool status = database.AddRecord(inp[Convert.ToInt16(id)].FileData, session.id, filebytes.Item1);
+                    Debug.WriteLine(status);
+                    JSONData = "OK" + inp[Convert.ToInt16(id)].base64stringpackets.Count;
+
+                    inp.RemoveAll(x => x.id == Convert.ToInt16(id));
+
+                }
+
+                return JSONData;
 
             }
             else
@@ -209,10 +222,10 @@ namespace WebService
             User user = json.JsonDeCodingUser(JSONData);
 
             user = db.ValidateUser(user);
-                // begin code van ~dries
+            // begin code van ~dries
             Session userToAdd = new Session(user.name, user.hash, user.token, user.id); //maakt de usersession aan op de server (dit is een childclass van User)
             ActiveUsers.Add(userToAdd); // voegt de user toe aan de sessions op de server
-                // einde code dries
+                                        // einde code dries
 
             string result = json.JsonCoding(user);
             return result;
@@ -241,7 +254,7 @@ namespace WebService
             {
                 return false;
             }
-             
+
         }
 
         public string GetUsers(Stream Data, string token)

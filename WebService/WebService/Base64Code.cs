@@ -19,6 +19,11 @@ namespace WebService
 
             return Tuple.Create(bitarray, naam);
         }
+        public string SerializeBase64(byte[] file)
+        {
+            string encodedData = Convert.ToBase64String(file);
+            return encodedData;
+        }
 
         public string saveFile(byte[] tempBytes, string fileName)
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace WebService
 {
     public class Database
     {
-        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionMaxim); // maak je eigen connectionstring en verander de naam
+        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionDries); // maak je eigen connectionstring en verander de naam
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
 
@@ -131,7 +132,7 @@ namespace WebService
 
         }
 
-        public bool AddRecord(Data fileData, string UserID)
+        public bool AddRecord(Data fileData, string UserID, byte[] file)
         {
             try
             {
@@ -146,11 +147,11 @@ namespace WebService
                 Guid uniqueid = (Guid)cmd.ExecuteScalar();
 
                 cmd2 = connection.CreateCommand();
-                cmd2.CommandText = "INSERT INTO [dbo].[files](fileID, ActualFile)SELECT '"+Convert.ToString(uniqueid)+"', BulkColumn FROM OPENROWSET(BULK '"+ fileData.path + "', SINGLE_BLOB) as f;";
+                cmd2.CommandText = "INSERT INTO [dbo].[files](fileID, ActualFile) VALUES (@fileID, @binary);";
 
-                //cmd2.Parameters.AddWithValue("@uniqueID", (Guid)uniqueid);
-                
-                //cmd2.Parameters.AddWithValue("@filepath", fileData.path);
+                cmd2.Parameters.Add("@fileID", SqlDbType.UniqueIdentifier).Value = uniqueid;
+
+                cmd2.Parameters.Add("@binary", SqlDbType.VarBinary, file.Length).Value = file;
 
                 cmd2.ExecuteNonQuery();
 
@@ -204,10 +205,46 @@ namespace WebService
             return itemlist;
         }
 
-        public void getSelectedItem(Guid uniqueid)
+        public BinaryFile getSelectedItem(Guid uniqueid)
         {
+            BinaryFile binaryFile = new BinaryFile();
 
-            //return file;
+            try
+            {
+                connection.Open();
+
+                cmd = connection.CreateCommand();
+                cmd.CommandText = "SELECT fileName, ActualFile FROM files INNER JOIN fileTable ON files.fileID = fileTable.fileID WHERE files.fileID = @fileID;";
+                cmd.Parameters.Add("@fileID", SqlDbType.UniqueIdentifier).Value = uniqueid;
+
+                SqlDataReader reader;
+
+                reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    binaryFile.name = reader.GetString(0);
+                    binaryFile.binary = (byte[])reader.GetValue(1);
+                }
+                reader.Close();
+                connection.Close();
+
+                return binaryFile;
+            }
+            catch (SqlException e)
+            {
+                connection.Close();
+                Debug.WriteLine(e.Message);
+                return new BinaryFile();
+            }
+            catch (Exception e)
+            {
+                connection.Close();
+                Debug.WriteLine(e.Message);
+                return new BinaryFile();
+            }
+
+
         }
 
         public User ValidateUser(User user)
