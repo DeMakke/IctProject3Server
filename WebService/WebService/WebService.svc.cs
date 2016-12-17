@@ -79,7 +79,10 @@ namespace WebService
 
                     string JSONData = reader.ReadToEnd();
                     item = json.JsonDeCodingItem(JSONData);
-                    succes.value = db.DeleteData(item);
+
+                    Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
+                    string userName = session.name;
+                    succes.value = db.DeleteData(item, userName);
                     return json.JsonCoding(succes);
             }
             else
