@@ -80,7 +80,7 @@ namespace WebService
                     string JSONData = reader.ReadToEnd();
                     item = json.JsonDeCodingItem(JSONData);
 
-                    Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
+                    Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == new Guid(token));
                     string userName = session.name;
                     succes.value = db.DeleteData(item, userName);
                     return json.JsonCoding(succes);
@@ -117,7 +117,7 @@ namespace WebService
                     //inp[Convert.ToInt16(id)].FileData.path = base64.saveFile(filebytes.Item1, inp[Convert.ToInt16(id)].FileData.name); // this line saves the fiile on the server itself
 
                     Database database = new Database();
-                    Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
+                    Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == new Guid(token));
 
                     bool status = database.AddRecord(inp[Convert.ToInt16(id)].FileData, session.id, filebytes.Item1);
                     Debug.WriteLine(status);
@@ -200,7 +200,7 @@ namespace WebService
                     JsonCode json = new JsonCode();
                     Database database = new Database();
 
-                Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
+                Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == new Guid(token));
 
                 List<Item> itemlist = database.GetData(session.id);
                 //List<Item> itemlist = database.GetItems();
@@ -240,8 +240,8 @@ namespace WebService
         {
             try
             {
-                Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(id));
-                int index = ActiveUsers.FindIndex(ActiveUsers => ActiveUsers.token == Convert.ToInt16(id));
+                Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == new Guid(id));
+                int index = ActiveUsers.FindIndex(ActiveUsers => ActiveUsers.token == new Guid(id));
                 ActiveUsers[index].Refresh();
                 if (session.Status == true)
                 {
@@ -249,7 +249,7 @@ namespace WebService
                 }
                 else
                 {
-                    ActiveUsers.RemoveAt(ActiveUsers.FindIndex(ActiveUsers => ActiveUsers.token == Convert.ToInt16(id)));
+                    ActiveUsers.RemoveAt(ActiveUsers.FindIndex(ActiveUsers => ActiveUsers.token == new Guid(id)));
                     return false;
                 }
             }
@@ -391,11 +391,11 @@ namespace WebService
 
         public string Logout(Stream Data, string token)
         {
-            Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
+            Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == new Guid(token));
             ActiveUsers.Remove(session);
 
             User user = new User();
-            user.token = 8500;
+            user.token = new Guid();
             user.name = "guest";
             string result = json.JsonCoding(user);
             return result;
@@ -410,7 +410,7 @@ namespace WebService
                 db = new Database();
                 Succes succes = new Succes();
                 StreamReader reader = new StreamReader(Data);
-                Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
+                Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == new Guid(token));
 
                 string JSONData = reader.ReadToEnd();
                 User user = json.Deserialize<User>(JSONData);

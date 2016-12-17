@@ -11,7 +11,7 @@ namespace WebService
 {
     public class Database
     {
-        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionFrederik); // maak je eigen connectionstring en verander de naam
+        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionDries); // maak je eigen connectionstring en verander de naam
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
 
@@ -76,6 +76,33 @@ namespace WebService
             //"WHERE [dbo].[fileTable].[fileID] = [dbo].[usersPerFile].[fileID]" +
             //"AND" +
             //"WHERE [usersPerFile].[userID] = [loginID]";
+
+            SqlDataReader reader;
+            reader = cmd.ExecuteReader();
+
+            string name = "";
+            Guid id = new Guid();
+            while (reader.Read())
+            {
+                id = reader.GetGuid(0);
+                name = reader.GetString(1);
+                Item currentItem = new Item();
+                currentItem.id = id;
+                currentItem.name = name;
+                itemlist.Add(currentItem);
+            }
+            reader.Close();
+            connection.Close();
+            return itemlist;
+        }
+
+        public List<Item> GetGuestData()
+        {
+            List<Item> itemlist = new List<Item>();
+            connection.Open();
+
+            cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT fileTable.fileId, fileTable.fileName FROM files INNER JOIN fileTable ON files.fileID = fileTable.fileID WHERE(fileTable.publiek = 1);";
 
             SqlDataReader reader;
             reader = cmd.ExecuteReader();
@@ -299,13 +326,16 @@ namespace WebService
             }
             if (checkPassword)
             {
-                user.token = random.Next(1, 8999);
+                Guid newguid = Guid.NewGuid();
+                string newguidformatted = "00000000-0000" + Convert.ToString(Guid.NewGuid()).Substring(13);
+
+                user.token = new Guid(newguidformatted);
                 user.id = UserId;
             }
             else
             {
-                user.token = 9999;
-                
+                user.token = new Guid("ffffffff-ffff-ffff-ffff-ffffffffffff");
+
             }
 
             return user;
