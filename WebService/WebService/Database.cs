@@ -58,7 +58,7 @@ namespace WebService
             connection.Open();
 
             cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT fileTable.fileId, fileTable.fileName FROM files INNER JOIN fileTable ON files.fileID = fileTable.fileID INNER JOIN usersPerFile ON files.fileID = usersPerFile.fileID WHERE(usersPerFile.UserID = '"+Userid+"');";
+            cmd.CommandText = "SELECT fileTable.fileId, fileTable.fileName FROM files INNER JOIN fileTable ON files.fileID = fileTable.fileID INNER JOIN usersPerFile ON files.fileID = usersPerFile.fileID WHERE(usersPerFile.UserID = '"+Userid+"' or fileTable.publiek = 1);";
 
             //selecteer de eigen bestanden
             //"SELECT [fileID],[fileName]" +
@@ -89,7 +89,18 @@ namespace WebService
                 Item currentItem = new Item();
                 currentItem.id = id;
                 currentItem.name = name;
-                itemlist.Add(currentItem);
+                Boolean noDuplicate = true;
+                foreach (Item item in itemlist)
+                {
+                    if (item.id == currentItem.id)
+                    {
+                        noDuplicate = false;
+                    }
+                }
+                if (noDuplicate)
+                {
+                    itemlist.Add(currentItem);
+                }
             }
             reader.Close();
             connection.Close();
