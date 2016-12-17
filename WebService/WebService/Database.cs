@@ -134,7 +134,7 @@ namespace WebService
 
         }
 
-        public Guid GetUserGUID(string userName)//functie haalt gevens van 1 gebruiker op
+        public Guid GetUserGUID(string userName)//functie haalt guid van 1 gebruiker op
         {
             connection.Open();
             cmd = connection.CreateCommand();
