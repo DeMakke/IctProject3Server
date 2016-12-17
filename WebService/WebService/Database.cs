@@ -11,7 +11,7 @@ namespace WebService
 {
     public class Database
     {
-        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionDries); // maak je eigen connectionstring en verander de naam
+        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionFrederik); // maak je eigen connectionstring en verander de naam
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
 
@@ -96,23 +96,25 @@ namespace WebService
             return itemlist;
         }
 
-        public bool DeleteData(Item file)
+        public bool DeleteData(Item file, string userName)
         {
             try
             {
+                Guid guid = GetUserGUID(userName);
                 connection.Open();
                 cmd = connection.CreateCommand();               
-                cmd.CommandText = "DELETE FROM fileTable WHERE fileID = @fileID"; 
+                cmd.CommandText = "DELETE FROM fileTable WHERE fileID = @fileID and UserID = @UserID"; 
                 cmd.Parameters.AddWithValue("@fileID", file.id);
-                int result = cmd.ExecuteNonQuery();
-                /*
+                cmd.Parameters.AddWithValue("@UserID", guid);
+                int result1 = cmd.ExecuteNonQuery();
+                
                 cmd2 = connection.CreateCommand();
-                cmd2.CommandText = "DELETE FROM [dbo].[files] WHERE fileID = @fileID";
+                cmd2.CommandText = "DELETE FROM usersPerFile WHERE fileID = @fileID and UserID = @UserID";
                 cmd2.Parameters.AddWithValue("@fileID", file.id);
-
+                cmd2.Parameters.AddWithValue("@UserID", guid);
                 int result2 = cmd2.ExecuteNonQuery();
-                */
-                if (result >= 1)
+
+                if ((result1 >= 1) || (result2 >= 1))
                 {
                     return true;
                 }
@@ -121,7 +123,7 @@ namespace WebService
                     return false;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
@@ -132,17 +134,38 @@ namespace WebService
 
         }
 
+        public Guid GetUserGUID(string userName)//functie haalt guid van 1 gebruiker op
+        {
+            connection.Open();
+            cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT UserID, UserName FROM Users WHERE UserName = @userName";
+            cmd.Parameters.AddWithValue("@userName", userName);
+            SqlDataReader reader;
+            reader = cmd.ExecuteReader();
+            Guid guid = new Guid();
+            
+            while (reader.Read())
+            {
+                guid = reader.GetGuid(0);
+            }
+            reader.Close();
+            connection.Close();
+
+            return guid;
+        }
+
         public bool AddRecord(Data fileData, string UserID, byte[] file)
         {
             try
             {
                 connection.Open();
                 cmd = connection.CreateCommand();
-                cmd.CommandText = "INSERT INTO [dbo].[fileTable] ([fileName],[filePath],[UserID]) OUTPUT inserted.fileID VALUES (@filename, @filepath, @userID)";
+                cmd.CommandText = "INSERT INTO [dbo].[fileTable] ([fileName],[filePath],[UserID],[publiek]) OUTPUT inserted.fileID VALUES (@filename, @filepath, @userID, @publiek)";
 
                 cmd.Parameters.AddWithValue("@filename", fileData.name);
                 cmd.Parameters.AddWithValue("@filepath", fileData.path);
                 cmd.Parameters.AddWithValue("@userID", UserID);
+                cmd.Parameters.AddWithValue("@publiek", 0);
 
                 Guid uniqueid = (Guid)cmd.ExecuteScalar();
 
@@ -349,7 +372,7 @@ namespace WebService
                 Guid ID = Guid.Parse(fileid);
                 connection.Open();
                 cmd = connection.CreateCommand();
-                cmd.CommandText = "UPDATE [dbo].[files] set publiek=@shareBool WHERE fileID =@fileID";
+                cmd.CommandText = "UPDATE [dbo].[fileTable] set publiek=@shareBool WHERE fileID =@fileID";
                 cmd.Parameters.AddWithValue("@shareBool", shareBool);
                 cmd.Parameters.AddWithValue("@fileID", ID);
 
