@@ -380,9 +380,41 @@ namespace WebService
         {
             try
             {
+                Guid dbUserID = new Guid();
+                List<Gebruiker> bestaandeGebruikers = new List<Gebruiker>();
+                Gebruiker bestaandeGebruiker;
+
+                //1. bestaande gebruikers voor het bestand ophalen
                 connection.Open();
                 cmd = connection.CreateCommand();
+                cmd.CommandText = "SELECT * FROM [dbo].[usersPerFile] WHERE fileID=@fileID";
+                cmd.Parameters.AddWithValue("@fileID", fileid);
+                SqlDataReader reader;
+                reader = cmd.ExecuteReader();
+                cmd.Parameters.Clear();
 
+                //2. gebruikers die door de client worden meegestuurd en al in de usersperfile tabel bij de file voorkomen, wegfilteren van selectedusers lijst
+
+                while (reader.Read())
+                {
+                    dbUserID = reader.GetGuid(1);
+                    foreach (Gebruiker user in selectedUsers)
+                    {
+                        if (user.id == dbUserID.ToString())
+                        {
+                            bestaandeGebruiker = user;
+                            bestaandeGebruikers.Add(bestaandeGebruiker);
+                        }
+                    }
+                }
+                reader.Close();
+
+                foreach (Gebruiker user in bestaandeGebruikers)
+                {
+                    selectedUsers.Remove(user);
+                }
+
+                //3. nieuwe gebruikers toevoegen aan de file in de tabel usersperfile
                 foreach (Gebruiker user in selectedUsers)
                 {
                     cmd.CommandText = "INSERT INTO [dbo].[usersPerFile] VALUES (@fileid,@userid)";
