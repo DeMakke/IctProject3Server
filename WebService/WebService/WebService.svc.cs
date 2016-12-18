@@ -305,7 +305,7 @@ namespace WebService
         {
             if (CheckUserStatus(token))
             {
-                Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
+                Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == new Guid(token));
                 string ownerId = session.id;
                 Database database = new Database();
                 JsonCode json = new JsonCode();
