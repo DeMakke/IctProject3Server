@@ -11,7 +11,7 @@ namespace WebService
         public bool Status { get; set; }
         private Timer SessionTimer = new Timer(1200000);
 
-        public Session(string rName, string rHash, int rToken, string rid)
+        public Session(string rName, string rHash, Guid rToken, string rid)
         {
             Status = true;
             name = rName;

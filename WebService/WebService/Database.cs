@@ -11,7 +11,7 @@ namespace WebService
 {
     public class Database
     {
-        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionFrederik); // maak je eigen connectionstring en verander de naam
+        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionDries); // maak je eigen connectionstring en verander de naam
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
         SqlCommand cmd3 = new SqlCommand();
@@ -108,7 +108,7 @@ namespace WebService
             return itemlist;
         }
 
-        public bool DeleteData(Item file, string userName) //delete file/share link function
+        public bool DeleteData(Item file, string userName)
         {
             try
             {
@@ -322,13 +322,16 @@ namespace WebService
             }
             if (checkPassword)
             {
-                user.token = random.Next(1, 8999);
+                Guid newguid = Guid.NewGuid();
+                string newguidformatted = "00000000-0000" + Convert.ToString(Guid.NewGuid()).Substring(13);
+
+                user.token = new Guid(newguidformatted);
                 user.id = UserId;
             }
             else
             {
-                user.token = 9999;
-                
+                user.token = new Guid("ffffffff-ffff-ffff-ffff-ffffffffffff");
+
             }
 
             return user;
