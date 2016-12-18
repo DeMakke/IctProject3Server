@@ -14,6 +14,7 @@ namespace WebService
         SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionDries); // maak je eigen connectionstring en verander de naam
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
+        SqlCommand cmd3 = new SqlCommand();
 
 
         //adding a user to the db for testing purposes
@@ -58,7 +59,7 @@ namespace WebService
             connection.Open();
 
             cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT fileTable.fileId, fileTable.fileName FROM files INNER JOIN fileTable ON files.fileID = fileTable.fileID INNER JOIN usersPerFile ON files.fileID = usersPerFile.fileID WHERE(usersPerFile.UserID = '"+Userid+"' or fileTable.publiek = 1);";
+            cmd.CommandText = "SELECT fileTable.fileId, fileTable.fileName FROM files INNER JOIN fileTable ON files.fileID = fileTable.fileID INNER JOIN usersPerFile ON files.fileID = usersPerFile.fileID WHERE(usersPerFile.UserID = '"+Userid+"');";
 
             //selecteer de eigen bestanden
             //"SELECT [fileID],[fileName]" +
@@ -107,52 +108,36 @@ namespace WebService
             return itemlist;
         }
 
-        public List<Item> GetGuestData()
-        {
-            List<Item> itemlist = new List<Item>();
-            connection.Open();
-
-            cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT fileTable.fileId, fileTable.fileName FROM files INNER JOIN fileTable ON files.fileID = fileTable.fileID WHERE(fileTable.publiek = 1);";
-
-            SqlDataReader reader;
-            reader = cmd.ExecuteReader();
-
-            string name = "";
-            Guid id = new Guid();
-            while (reader.Read())
-            {
-                id = reader.GetGuid(0);
-                name = reader.GetString(1);
-                Item currentItem = new Item();
-                currentItem.id = id;
-                currentItem.name = name;
-                itemlist.Add(currentItem);
-            }
-            reader.Close();
-            connection.Close();
-            return itemlist;
-        }
-
         public bool DeleteData(Item file, string userName)
         {
             try
             {
                 Guid guid = GetUserGUID(userName);
                 connection.Open();
-                cmd = connection.CreateCommand();               
+                cmd = connection.CreateCommand(); //delete actual file
                 cmd.CommandText = "DELETE FROM fileTable WHERE fileID = @fileID and UserID = @UserID"; 
                 cmd.Parameters.AddWithValue("@fileID", file.id);
                 cmd.Parameters.AddWithValue("@UserID", guid);
                 int result1 = cmd.ExecuteNonQuery();
-                
-                cmd2 = connection.CreateCommand();
-                cmd2.CommandText = "DELETE FROM usersPerFile WHERE fileID = @fileID and UserID = @UserID";
+                cmd.Parameters.Clear();
+
+                cmd2 = connection.CreateCommand(); //delete share link only
+                cmd2.CommandText = "DELETE FROM usersPerFile WHERE fileID = @fileID and UserID = @UserID"; 
                 cmd2.Parameters.AddWithValue("@fileID", file.id);
                 cmd2.Parameters.AddWithValue("@UserID", guid);
                 int result2 = cmd2.ExecuteNonQuery();
+                cmd2.Parameters.Clear();
 
-                if ((result1 >= 1) || (result2 >= 1))
+                if (result1 >= 1) //user who tries to delete the file is the owner so all shared links can be deleted
+                {
+                    cmd3 = connection.CreateCommand();
+                    cmd3.CommandText = "DELETE FROM usersPerFile WHERE fileID = @fileID";
+                    cmd3.Parameters.AddWithValue("@fileID", file.id);
+                    int result3 = cmd3.ExecuteNonQuery();
+                    cmd3.Parameters.Clear();
+                }
+
+                if ((result1 >= 1) || (result2 >= 1)) //either owner/sharedWithUser deleted a file/share link to user
                 {
                     return true;
                 }
@@ -354,26 +339,40 @@ namespace WebService
 
         public List<Gebruiker> GetUsersData()//functie haalt gevens van alle gebruikers op
         {
-            connection.Open();
-            cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT UserID, UserName FROM Users";
-            SqlDataReader reader;
-            reader = cmd.ExecuteReader();
-            Gebruiker user;
             List<Gebruiker> userList = new List<Gebruiker>();
-            Guid userid = new Guid();
-
-            while (reader.Read())
+            try
             {
-                user = new Gebruiker();
-                userid = reader.GetGuid(0);
-                user.id = Convert.ToString(userid);
-                user.name = reader.GetString(1);
-                userList.Add(user);
-            }
-            reader.Close();
-            connection.Close();
+                connection.Open();
+                cmd = connection.CreateCommand();
+                cmd.CommandText = "SELECT UserID, UserName FROM Users";
+                SqlDataReader reader;
+                reader = cmd.ExecuteReader();
+                Gebruiker user;
+                Guid userid = new Guid();
 
+                while (reader.Read())
+                {
+                    user = new Gebruiker();
+                    userid = reader.GetGuid(0);
+                    user.id = Convert.ToString(userid);
+                    user.name = reader.GetString(1);
+                    userList.Add(user);
+                }
+                reader.Close();
+            }
+            catch (SqlException e)
+            {
+                Debug.WriteLine(e.Message);
+                throw;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                throw;
+            }
+            finally {
+                connection.Close();
+            }
             return userList;
         }
 
@@ -405,21 +404,33 @@ namespace WebService
             }
         }
 
-        public bool ShareWithAll(string fileid)
+        public bool ShareWithAll(string fileid, string ownerId)
         {
             try
             {
-                int shareBool = 1;
                 Guid ID = Guid.Parse(fileid);
                 connection.Open();
                 cmd = connection.CreateCommand();
                 cmd.CommandText = "UPDATE [dbo].[fileTable] set publiek=@shareBool WHERE fileID =@fileID";
-                cmd.Parameters.AddWithValue("@shareBool", shareBool);
+                cmd.Parameters.AddWithValue("@shareBool", 1);
                 cmd.Parameters.AddWithValue("@fileID", ID);
-
                 cmd.ExecuteNonQuery();
-                return true;
+                connection.Close();
 
+                List<Gebruiker> gebruikers = GetUsersData();
+                connection.Open();
+                foreach (Gebruiker gebruiker in gebruikers)
+                {
+                    if (gebruiker.id != ownerId)
+                    {
+                        cmd2 = connection.CreateCommand();
+                        cmd2.CommandText = "INSERT INTO usersPerFile (fileID, userID) VALUES (@fileId, @userId)";
+                        cmd2.Parameters.AddWithValue("@fileId", ID);
+                        cmd2.Parameters.AddWithValue("@userId", gebruiker.id);
+                        cmd2.ExecuteNonQuery();
+                    }
+                }
+                return true;
             }
             catch (SqlException ex)
             {
@@ -429,6 +440,8 @@ namespace WebService
             finally
             {
                 connection.Close();
+                cmd.Parameters.Clear();
+                cmd2.Parameters.Clear();
             }
         }
 

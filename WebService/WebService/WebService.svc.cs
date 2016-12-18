@@ -305,11 +305,13 @@ namespace WebService
         {
             if (CheckUserStatus(token))
             {
+                Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == Convert.ToInt16(token));
+                string ownerId = session.id;
                 Database database = new Database();
                 JsonCode json = new JsonCode();
                 Succes succes = new Succes();
                 StreamReader reader = new StreamReader(Data);
-                succes.value = database.ShareWithAll(fileid);
+                succes.value = database.ShareWithAll(fileid, ownerId);
                 return json.JsonCoding(succes);
             }
             else
