@@ -435,7 +435,32 @@ namespace WebService
                 connection.Close();
             }
         }
+        public List<Item> GetGuestData()
+        {
+            List<Item> itemlist = new List<Item>();
+            connection.Open();
 
+            cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT fileTable.fileId, fileTable.fileName FROM files INNER JOIN fileTable ON files.fileID = fileTable.fileID WHERE(fileTable.publiek = 1);";
+
+            SqlDataReader reader;
+            reader = cmd.ExecuteReader();
+
+            string name = "";
+            Guid id = new Guid();
+            while (reader.Read())
+            {
+                id = reader.GetGuid(0);
+                name = reader.GetString(1);
+                Item currentItem = new Item();
+                currentItem.id = id;
+                currentItem.name = name;
+                itemlist.Add(currentItem);
+            }
+            reader.Close();
+            connection.Close();
+            return itemlist;
+        }
         public bool ShareWithAll(string fileid, string ownerId)
         {
             try
