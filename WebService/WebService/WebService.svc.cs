@@ -195,10 +195,11 @@ namespace WebService
 
         public string GetFileNames(Stream Data, string token)
         {
+            JsonCode json = new JsonCode();
+            Database database = new Database();
             if (CheckUserStatus(token))
             {
-                    JsonCode json = new JsonCode();
-                    Database database = new Database();
+                
 
                 Session session = ActiveUsers.Find(ActiveUsers => ActiveUsers.token == new Guid(token));
 
@@ -207,13 +208,21 @@ namespace WebService
                 //Debug.WriteLine("test");
                 string reply = json.Serialize<List<Item>>(itemlist);
 
-                    List<Item> itemlistdebug = json.Deserialize<List<Item>>(reply);
+                List<Item> itemlistdebug = json.Deserialize<List<Item>>(reply);
 
-                    return reply;
+                return reply;
             }
             else
             {
-                return "user is not logged in";
+
+                List<Item> itemlist = database.GetGuestData();
+                //List<Item> itemlist = database.GetItems();
+                //Debug.WriteLine("test");
+                string reply = json.Serialize<List<Item>>(itemlist);
+
+                List<Item> itemlistdebug = json.Deserialize<List<Item>>(reply);
+
+                return reply;
             }
         }
 

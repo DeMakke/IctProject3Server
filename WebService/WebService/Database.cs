@@ -12,6 +12,7 @@ namespace WebService
     public class Database
     {
         SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionFrederik); // maak je eigen connectionstring en verander de naam
+
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
         SqlCommand cmd3 = new SqlCommand();
@@ -380,9 +381,41 @@ namespace WebService
         {
             try
             {
+                Guid dbUserID = new Guid();
+                List<Gebruiker> bestaandeGebruikers = new List<Gebruiker>();
+                Gebruiker bestaandeGebruiker;
+
+                //1. bestaande gebruikers voor het bestand ophalen
                 connection.Open();
                 cmd = connection.CreateCommand();
+                cmd.CommandText = "SELECT * FROM [dbo].[usersPerFile] WHERE fileID=@fileID";
+                cmd.Parameters.AddWithValue("@fileID", fileid);
+                SqlDataReader reader;
+                reader = cmd.ExecuteReader();
+                cmd.Parameters.Clear();
 
+                //2. gebruikers die door de client worden meegestuurd en al in de usersperfile tabel bij de file voorkomen, wegfilteren van selectedusers lijst
+
+                while (reader.Read())
+                {
+                    dbUserID = reader.GetGuid(1);
+                    foreach (Gebruiker user in selectedUsers)
+                    {
+                        if (user.id == dbUserID.ToString())
+                        {
+                            bestaandeGebruiker = user;
+                            bestaandeGebruikers.Add(bestaandeGebruiker);
+                        }
+                    }
+                }
+                reader.Close();
+
+                foreach (Gebruiker user in bestaandeGebruikers)
+                {
+                    selectedUsers.Remove(user);
+                }
+
+                //3. nieuwe gebruikers toevoegen aan de file in de tabel usersperfile
                 foreach (Gebruiker user in selectedUsers)
                 {
                     cmd.CommandText = "INSERT INTO [dbo].[usersPerFile] VALUES (@fileid,@userid)";
@@ -403,7 +436,32 @@ namespace WebService
                 connection.Close();
             }
         }
+        public List<Item> GetGuestData()
+        {
+            List<Item> itemlist = new List<Item>();
+            connection.Open();
 
+            cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT fileTable.fileId, fileTable.fileName FROM files INNER JOIN fileTable ON files.fileID = fileTable.fileID WHERE(fileTable.publiek = 1);";
+
+            SqlDataReader reader;
+            reader = cmd.ExecuteReader();
+
+            string name = "";
+            Guid id = new Guid();
+            while (reader.Read())
+            {
+                id = reader.GetGuid(0);
+                name = reader.GetString(1);
+                Item currentItem = new Item();
+                currentItem.id = id;
+                currentItem.name = name;
+                itemlist.Add(currentItem);
+            }
+            reader.Close();
+            connection.Close();
+            return itemlist;
+        }
         public bool ShareWithAll(string fileid, string ownerId)
         {
             try
