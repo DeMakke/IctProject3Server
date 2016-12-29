@@ -232,12 +232,15 @@ namespace WebService
             StreamReader reader = new StreamReader(data);
             string JSONData = reader.ReadToEnd();
             User user = json.JsonDeCodingUser(JSONData);
-
             user = db.ValidateUser(user);
-            // begin code van ~dries
-            Session userToAdd = new Session(user.name, user.hash, user.token, user.id); //maakt de usersession aan op de server (dit is een childclass van User)
-            ActiveUsers.Add(userToAdd); // voegt de user toe aan de sessions op de server
-                                        // einde code dries
+            if (!CheckUserStatus(user.id)) //toegevoegd door Frederik zodat deze functie gebruikt kan worden voor reeds bestaande session-users om het password te checken zonder dat er telkens een nieuwe session wordt aangemaakt voor deze user
+            {
+                // begin code van ~dries
+                Session userToAdd = new Session(user.name, user.hash, user.token, user.id); //maakt de usersession aan op de server (dit is een childclass van User)
+                ActiveUsers.Add(userToAdd); // voegt de user toe aan de sessions op de server
+                                            // einde code dries
+            }
+
 
             string result = json.JsonCoding(user);
             return result;
