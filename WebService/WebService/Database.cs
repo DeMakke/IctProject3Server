@@ -11,7 +11,7 @@ namespace WebService
 {
     public class Database
     {
-        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionDries); // maak je eigen connectionstring en verander de naam
+        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionFrederik); // maak je eigen connectionstring en verander de naam
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
         SqlCommand cmd3 = new SqlCommand();
@@ -322,7 +322,7 @@ namespace WebService
             }
             if (checkPassword)
             {
-                Guid newguid = Guid.NewGuid();
+                //Guid newguid = Guid.NewGuid();
                 string newguidformatted = "00000000-0000" + Convert.ToString(Guid.NewGuid()).Substring(13);
 
                 user.token = new Guid(newguidformatted);
