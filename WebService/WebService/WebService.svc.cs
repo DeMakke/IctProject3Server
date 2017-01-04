@@ -344,7 +344,7 @@ namespace WebService
 
         public string AddUser(Stream Data, string token)
         {
-            if (CheckUserStatus(token))
+            if (CheckUserStatus(token) == true && token.Substring(0,13) == "eeeeeeee-ffff")
             {
                 Database database = new Database();
                 JsonCode json = new JsonCode();
@@ -368,7 +368,7 @@ namespace WebService
 
         public string DeleteUser(Stream Data, string token)
         {
-            if (CheckUserStatus(token))
+            if (CheckUserStatus(token) == true && token.Substring(0, 13) == "eeeeeeee-ffff")
             {
                 Database database = new Database();
                 JsonCode json = new JsonCode();
@@ -390,7 +390,7 @@ namespace WebService
 
         public string UpdateUser(Stream Data, string token)
         {
-            if (CheckUserStatus(token))
+            if (CheckUserStatus(token) == true && token.Substring(0, 13) == "eeeeeeee-ffff")
             {
                 Database database = new Database();
                 JsonCode json = new JsonCode();
