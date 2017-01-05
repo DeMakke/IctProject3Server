@@ -150,20 +150,21 @@ namespace WebService
 
                     int amountOfPackets = 0;
 
-
-                    if (receivedDataO.size > 50000)
+                    if (receivedDataO.size < 100000000)
                     {
-                        amountOfPackets = receivedDataO.size / 50000;
-
-                        if ((receivedDataO.size % 50000) != 0)
+                        if (receivedDataO.size > 50000)
                         {
-                            amountOfPackets += 1;
+                            amountOfPackets = receivedDataO.size / 50000;
+
+                            if ((receivedDataO.size % 50000) != 0)
+                            {
+                                amountOfPackets += 1;
+                            }
                         }
-                    }
-                    else
-                    {
-                        amountOfPackets = 1;
-                    }
+                        else
+                        {
+                            amountOfPackets = 1;
+                        }
 
                     int current;
                     if (inp == null)
@@ -180,9 +181,17 @@ namespace WebService
                         string uniqueID = Convert.ToString(current);
                         return uniqueID + ":" + Convert.ToString(amountOfPackets);
                     }
+                }
+                else
+                {
+                    return "0:0";
+                }
 
 
-                    return "error";
+                    
+
+
+                    return "0:0";
 
             }
             else
@@ -335,7 +344,7 @@ namespace WebService
 
         public string AddUser(Stream Data, string token)
         {
-            if (CheckUserStatus(token))
+            if (CheckUserStatus(token) == true && token.Substring(0,13) == "eeeeeeee-ffff")
             {
                 Database database = new Database();
                 JsonCode json = new JsonCode();
@@ -359,7 +368,7 @@ namespace WebService
 
         public string DeleteUser(Stream Data, string token)
         {
-            if (CheckUserStatus(token))
+            if (CheckUserStatus(token) == true && token.Substring(0, 13) == "eeeeeeee-ffff")
             {
                 Database database = new Database();
                 JsonCode json = new JsonCode();
@@ -381,7 +390,7 @@ namespace WebService
 
         public string UpdateUser(Stream Data, string token)
         {
-            if (CheckUserStatus(token))
+            if (CheckUserStatus(token) == true && token.Substring(0, 13) == "eeeeeeee-ffff")
             {
                 Database database = new Database();
                 JsonCode json = new JsonCode();

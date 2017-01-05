@@ -11,7 +11,7 @@ namespace WebService
 {
     public class Database
     {
-        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionFrederik); // maak je eigen connectionstring en verander de naam
+        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionDries); // maak je eigen connectionstring en verander de naam
 
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
@@ -299,11 +299,12 @@ namespace WebService
             connection.Open();
 
             cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT [Password], [UserId] FROM [dbo].[Users] WHERE UserName = @username";
+            cmd.CommandText = "SELECT [Password], [UserId], [IsAdmin] FROM [dbo].[Users] WHERE UserName = @username";
             cmd.Parameters.AddWithValue("@username", user.name);
 
             string password = "";
             string UserId = "";
+            bool isadmin = false;
             Md5Class hashing = new Md5Class();
             bool checkPassword = false;
             Random random = new Random();
@@ -314,6 +315,7 @@ namespace WebService
             {
                 password = reader.GetString(0);
                 UserId = Convert.ToString(reader.GetGuid(1));
+                isadmin = reader.GetBoolean(2);
             }
             reader.Close();
             connection.Close();
@@ -324,7 +326,15 @@ namespace WebService
             if (checkPassword)
             {
                 //Guid newguid = Guid.NewGuid();
-                string newguidformatted = "00000000-0000" + Convert.ToString(Guid.NewGuid()).Substring(13);
+                string newguidformatted = "";
+                if (isadmin)
+                {
+                    newguidformatted = "eeeeeeee-ffff" + Convert.ToString(Guid.NewGuid()).Substring(13);
+                }
+                else
+                {
+                    newguidformatted = "00000000-0000" + Convert.ToString(Guid.NewGuid()).Substring(13);
+                }
 
                 user.token = new Guid(newguidformatted);
                 user.id = UserId;
