@@ -377,9 +377,13 @@ namespace WebService
                 StreamReader reader = new StreamReader(Data);
                 string JSONData = reader.ReadToEnd();
                 User user = json.JsonDeCodingUser(JSONData);
-
-                string id = user.id;
-                succes.value = database.DeleteUser(id);
+                if (user.name != "Admin")
+                {
+                    string id = user.id;
+                    succes.value = database.DeleteUser(id);
+                }else {
+                    succes.value = false;
+                }
                 return json.JsonCoding(succes);
             }
             else
@@ -403,7 +407,15 @@ namespace WebService
                 string id = user.id;
                 string name = user.name;
                 string password = user.password;
-                succes.value = database.UpdateUser(id, name, password);
+                if (name != "Admin")
+                {
+                    succes.value = database.UpdateUser(id, name, password);
+                }
+                else
+                {
+                    succes.value = false;
+                }
+                
                 return json.JsonCoding(succes);
             }
             else

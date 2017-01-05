@@ -11,7 +11,7 @@ namespace WebService
 {
     public class Database
     {
-        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionDries); // maak je eigen connectionstring en verander de naam
+        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionFrederik); // maak je eigen connectionstring en verander de naam
 
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
@@ -515,29 +515,38 @@ namespace WebService
 
         public bool AddUser(string id, string name, string password)
         {
-            try
+            List<Gebruiker> gebruikers = GetUsersData();
+            if (gebruikers.Exists(x => x.name == name))
             {
-                Guid ID = Guid.Parse(id);
-                connection.Open();
-                cmd = connection.CreateCommand();
-                cmd.CommandText = "INSERT INTO Users (UserID, UserName, Password) VALUES(@UserID,@UserName,@Password)";
-                cmd.Parameters.AddWithValue("@UserID", ID);
-                cmd.Parameters.AddWithValue("@UserName", name);
-                cmd.Parameters.AddWithValue("@Password", password);
-
-                cmd.ExecuteNonQuery();
-                return true;
-
-            }
-            catch (SqlException ex)
-            {
-                Debug.WriteLine(ex.Message);
                 return false;
             }
-            finally
+            else
             {
-                connection.Close();
+                try
+                {
+                    Guid ID = Guid.Parse(id);
+                    connection.Open();
+                    cmd = connection.CreateCommand();
+                    cmd.CommandText = "INSERT INTO Users (UserID, UserName, Password) VALUES(@UserID,@UserName,@Password)";
+                    cmd.Parameters.AddWithValue("@UserID", ID);
+                    cmd.Parameters.AddWithValue("@UserName", name);
+                    cmd.Parameters.AddWithValue("@Password", password);
+
+                    cmd.ExecuteNonQuery();
+                    return true;
+
+                }
+                catch (SqlException ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    return false;
+                }
+                finally
+                {
+                    connection.Close();
+                }
             }
+            
         }
 
         public bool DeleteUser(string id)
@@ -567,28 +576,36 @@ namespace WebService
 
         public bool UpdateUser(string userId, string name, string password)
         {
-            try
+            List<Gebruiker> gebruikers = GetUsersData();
+            if (gebruikers.Exists(x => x.name == name))
             {
-                Guid ID = Guid.Parse(userId);
-                connection.Open();
-                cmd = connection.CreateCommand();
-                cmd.CommandText = "UPDATE Users set UserName=@UserName,Password=@Password WHERE UserID=@UserID";
-                cmd.Parameters.AddWithValue("@UserID", ID);
-                cmd.Parameters.AddWithValue("@UserName", name);
-                cmd.Parameters.AddWithValue("@Password", password);
-
-                cmd.ExecuteNonQuery();
-                return true;
-
-            }
-            catch (SqlException ex)
-            {
-                Debug.WriteLine(ex.Message);
                 return false;
             }
-            finally
+            else
             {
-                connection.Close();
+                try
+                {
+                    Guid ID = Guid.Parse(userId);
+                    connection.Open();
+                    cmd = connection.CreateCommand();
+                    cmd.CommandText = "UPDATE Users set UserName=@UserName,Password=@Password WHERE UserID=@UserID";
+                    cmd.Parameters.AddWithValue("@UserID", ID);
+                    cmd.Parameters.AddWithValue("@UserName", name);
+                    cmd.Parameters.AddWithValue("@Password", password);
+
+                    cmd.ExecuteNonQuery();
+                    return true;
+
+                }
+                catch (SqlException ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    return false;
+                }
+                finally
+                {
+                    connection.Close();
+                }
             }
         }
 
