@@ -11,11 +11,10 @@ namespace WebService
 {
     public class Database
     {
-<<<<<<< HEAD
+
         SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionPieter); // maak je eigen connectionstring en verander de naam
-=======
-        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionFrederik); // maak je eigen connectionstring en verander de naam
->>>>>>> master
+
+
 
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
