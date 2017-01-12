@@ -11,7 +11,10 @@ namespace WebService
 {
     public class Database
     {
-        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionFrederik); // maak je eigen connectionstring en verander de naam
+
+        SqlConnection connection = new SqlConnection(Properties.Settings.Default.DBconnectionPieter); // maak je eigen connectionstring en verander de naam
+
+
 
         SqlCommand cmd = new SqlCommand();
         SqlCommand cmd2 = new SqlCommand();
@@ -319,10 +322,9 @@ namespace WebService
             }
             reader.Close();
             connection.Close();
-            using (MD5 md5Hash = MD5.Create())
-            {
-                checkPassword = hashing.VerifyMd5Hash(md5Hash, password, user.hash);
-            }
+            
+            checkPassword = hashing.VerifyMd5Hash(password, user.hash);
+            
             if (checkPassword)
             {
                 //Guid newguid = Guid.NewGuid();

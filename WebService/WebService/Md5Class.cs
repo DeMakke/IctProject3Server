@@ -21,11 +21,10 @@ namespace WebService
         }
 
         // Verify a hash against a string.
-        public bool VerifyMd5Hash(MD5 md5Hash, string input, string hash)
+        public bool VerifyMd5Hash(string input, string hash)
         {
-            string hashOfInput = GetMd5Hash(md5Hash, input);
-            StringComparer comparer = StringComparer.OrdinalIgnoreCase;
-            if (0 == comparer.Compare(hashOfInput, hash))
+           
+            if (input == hash)
             {
                 return true;
             }

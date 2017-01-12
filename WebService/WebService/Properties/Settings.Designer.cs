@@ -32,7 +32,19 @@ namespace WebService.Properties {
                 return ((string)(this["DBconnectionDries"]));
             }
         }
-        
+
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=WOK\\PIETER;Initial Catalog=fileshare;Integrated Security=True")]
+        public string DBconnectionPieter
+        {
+            get
+            {
+                return ((string)(this["DBconnectionPieter"]));
+            }
+        }
+
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
