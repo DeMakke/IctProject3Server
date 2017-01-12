@@ -38,16 +38,17 @@ namespace WebService
 
         public string GetFile(Stream Data, string token)
         {
+            StreamReader reader = new StreamReader(Data);
+            string JSONData = reader.ReadToEnd();
+
+            BinaryFile binaryfile = new BinaryFile();
+            Database database = new Database();
+            Base64Code base64 = new Base64Code();
+            Data data = new Data();
+            JsonCode json = new JsonCode();
             if (CheckUserStatus(token))
             {
-                StreamReader reader = new StreamReader(Data);
-                string JSONData = reader.ReadToEnd();
 
-                BinaryFile binaryfile = new BinaryFile();
-                Database database = new Database();
-                Base64Code base64 = new Base64Code();
-                Data data = new Data();
-                JsonCode json = new JsonCode();
                 //data.base64 = "amEgbmVlIGlrIGdhIG1pam4gcGFzIG5pZSBkb29yc3R1cmVu";
                 //data.name = "tsserver.txt";
 
@@ -63,7 +64,15 @@ namespace WebService
             }
             else
             {
-                return "user is not logged in";
+                string fileid = JSONData.Replace("\\\"", "\"");
+
+                binaryfile = database.getSelectedItem(new Guid(fileid));
+                data.base64 = base64.SerializeBase64(binaryfile.binary);
+                data.name = binaryfile.name;
+
+                string JsonToSend = json.JsonCoding(data);
+
+                return JsonToSend;
             }
         }
 
